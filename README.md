@@ -1,5 +1,8 @@
 # Mintlify Starter Kit
 
+- icons : https://fontawesome.com/search?ic=free
+
+
 Click on `Use this template` to copy the Mintlify starter kit. The starter kit contains examples including
 
 - Guide pages
