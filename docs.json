@@ -20,6 +20,12 @@
               "quickstart",
               "development"
             ]
+          },
+          {
+            "group": "必读",
+            "pages": [
+              "essentials-required/required-reading"
+            ]
           }
         ]
       },
@@ -27,9 +33,100 @@
         "tab": "交易统计",
         "groups": [
           {
-            "group": "API Documentation",
+            "group": "Group 1",
             "pages": [
-              "api-reference/introduction"
+              "trading-statistics/group1"
+            ]
+          },
+          {
+            "group": "Group 2",
+            "pages": [
+              "trading-statistics/group2"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "新闻",
+        "groups": [
+          {
+            "group": "Group 1",
+            "pages": [
+              "news/group1"
+            ]
+          },
+          {
+            "group": "Group 2",
+            "pages": [
+              "news/group2"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "风控",
+        "groups": [
+          {
+            "group": "Group 1",
+            "pages": [
+              "risk-control/group1"
+            ]
+          },
+          {
+            "group": "Group 2",
+            "pages": [
+              "risk-control/group2"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "下单面板",
+        "groups": [
+          {
+            "group": "Group 1",
+            "pages": [
+              "order-panel/group1"
+            ]
+          },
+          {
+            "group": "Group 2",
+            "pages": [
+              "order-panel/group2"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "市场情绪",
+        "groups": [
+          {
+            "group": "Group 1",
+            "pages": [
+              "market-sentiment/group1"
+            ]
+          },
+          {
+            "group": "Group 2",
+            "pages": [
+              "market-sentiment/group2"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "MT4/MT5跟单",
+        "groups": [
+          {
+            "group": "Group 1",
+            "pages": [
+              "mt4-mt5-copy/group1"
+            ]
+          },
+          {
+            "group": "Group 2",
+            "pages": [
+              "mt4-mt5-copy/group2"
             ]
           }
         ]
@@ -64,7 +161,7 @@
   },
   "footer": {
     "socials": {
-      "qq": "https://x.com/mintlify"
+      "website": "https://qm.qq.com/cgi-bin/qm/qr?k=YOUR_QQ_GROUP_KEY"
     }
   }
 }
