@@ -66,11 +66,6 @@
           "anchor": "交易社区",
           "href": "https://www.b123.com/",
           "icon": "comment"
-        },
-        {
-          "anchor": "博客",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
         }
       ]
     }
