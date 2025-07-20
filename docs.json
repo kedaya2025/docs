@@ -3,12 +3,11 @@
   "theme": "mint",
   "name": "Mint Starter Kit",
   "colors": {
-    "primary": "#0D9373",
-    "light": "#55D799",
-    "dark": "#0D9373"
+    "primary": "#16A34A",
+    "light": "#07C983",
+    "dark": "#15803D"
   },
   "favicon": "/favicon.svg",
-  
   "navigation": {
     "tabs": [
       {
@@ -36,13 +35,21 @@
         ]
       },
       {
-        "tab": "快速开始",
+        "tab": "API Reference",
         "groups": [
           {
-            "group": "核心功能",
+            "group": "API Documentation",
             "pages": [
-              "features/overview",
-              "features/advanced"
+              "api-reference/introduction"
+            ]
+          },
+          {
+            "group": "Endpoint Examples",
+            "pages": [
+              "api-reference/endpoint/get",
+              "api-reference/endpoint/create",
+              "api-reference/endpoint/delete",
+              "api-reference/endpoint/webhook"
             ]
           }
         ]
@@ -51,14 +58,14 @@
     "global": {
       "anchors": [
         {
-          "anchor": "中文的链接",
-          "href": "https://mintlify.com/docs",
+          "anchor": "了解更多",
+          "href": "https://copilot.fxcores.com/",
           "icon": "book-open-cover"
         },
         {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
+          "anchor": "交易社区",
+          "href": "https://www.b123.com/",
+          "icon": "user-circle"
         },
         {
           "anchor": "博客",
@@ -88,6 +95,7 @@
   "footer": {
     "socials": {
       "x": "https://x.com/mintlify",
+      "github": "https://github.com/mintlify",
       "linkedin": "https://linkedin.com/company/mintlify"
     }
   }
