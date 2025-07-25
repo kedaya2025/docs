@@ -1,0 +1,553 @@
+---
+title: "界面操作和交互功能"
+description: "篮子交易模块的界面布局和交互功能详细说明"
+---
+
+## 界面总览
+
+篮子交易模块采用三面板架构设计，包含主面板、设置面板和分析面板。界面基于CBmp位图引擎构建，提供专业的货币强度可视化显示和丰富的交互功能，支持独立拖拽和多语言显示。
+
+## 主面板结构
+
+### 面板尺寸和布局
+
+<CardGroup cols={2}>
+  <Card title="基本尺寸" icon="ruler">
+    **宽度**: 动态计算，基于内容布局
+    
+    **高度**: 分区域计算总高度
+    
+    **标题栏**: 30px固定高度
+    
+    **间距**: 标准5px间距
+  </Card>
+  
+  <Card title="布局结构" icon="layout">
+    **标题栏**: 模块名称和控制按钮
+    
+    **强度显示区**: 8个货币强度卡片
+    
+    **趋势面板区**: 货币对趋势评分表格
+    
+    **时间显示区**: 当前周期和剩余时间
+  </Card>
+</CardGroup>
+
+### 标题栏区域
+
+#### 标题显示
+
+<Accordion title="多语言标题">
+**中文**: "TraderCopilot - 篮子交易"
+
+**英文**: "TraderCopilot - Basket Trading"
+
+**字体**: 根据语言自动选择合适字体
+
+**位置**: 左对齐，垂直居中
+
+**样式**: 15号字体，白色文字
+</Accordion>
+
+#### 控制按钮
+
+<CardGroup cols={3}>
+  <Card title="关闭按钮" icon="x">
+    **位置**: 标题栏右侧
+    
+    **功能**: 关闭篮子交易面板
+    
+    **样式**: 20×20像素X图标
+    
+    **交互**: 点击立即关闭面板
+  </Card>
+  
+  <Card title="设置按钮" icon="gear">
+    **位置**: 关闭按钮左侧
+    
+    **功能**: 打开/关闭设置面板
+    
+    **状态**: 支持开关状态显示
+    
+    **交互**: 切换设置面板显示状态
+  </Card>
+  
+  <Card title="分析按钮" icon="chart-line">
+    **位置**: 设置按钮左侧
+    
+    **功能**: 打开/关闭分析面板
+    
+    **状态**: 支持开关状态显示
+    
+    **交互**: 切换分析面板显示状态
+  </Card>
+</CardGroup>
+
+## 货币强度显示区
+
+### 强度卡片布局
+
+<CardGroup cols={2}>
+  <Card title="卡片排列" icon="th">
+    **排列方式**: 4×2网格布局
+    
+    **卡片尺寸**: 119×74像素
+    
+    **间距**: 卡片间5像素间距
+    
+    **总尺寸**: 约500×160像素
+  </Card>
+  
+  <Card title="卡片结构" icon="id-card">
+    **左侧**: 10级渐变色条(22像素宽)
+    
+    **中间**: 货币代码和强度数值(65像素宽)
+    
+    **右侧**: B/C/S三个操作按钮(22像素宽)
+    
+    **边框**: 灰色边框线
+  </Card>
+</CardGroup>
+
+### 强度卡片交互
+
+#### 按钮点击检测
+
+```cpp
+int CBasket::CheckStrengthPanelClick(const int rel_x, const int rel_y) {
+    const int margin = 2;
+    const int bar_width = 22;
+    const int button_spacing = 1;
+    
+    // 计算按钮区域
+    int button_start_x = 1+2 + bar_width + margin + 65 + margin;
+    
+    if(rel_x >= button_start_x && rel_x < button_start_x + bar_width) {
+        // B按钮区域
+        int b_start_y = 1+2;
+        int b_end_y = b_start_y + 20;
+        if(rel_y >= b_start_y && rel_y < b_end_y)
+            return 1; // B按钮
+            
+        // C按钮区域  
+        int c_start_y = b_end_y + button_spacing;
+        int c_end_y = c_start_y + 20;
+        if(rel_y >= c_start_y && rel_y < c_end_y)
+            return 2; // C按钮
+            
+        // S按钮区域
+        int s_start_y = c_end_y + button_spacing;
+        int s_end_y = s_start_y + 20;
+        if(rel_y >= s_start_y && rel_y < s_end_y)
+            return 3; // S按钮
+    }
+    return 0; // 未点击按钮
+}
+```
+
+#### 按钮功能
+
+<CardGroup cols={3}>
+  <Card title="B按钮 (买入)" icon="arrow-up">
+    **颜色**: 绿色 (C'9,153,125')
+    
+    **功能**: 买入该货币的篮子
+    
+    **执行**: 
+    - 买入所有直接货币对
+    - 卖出所有反向货币对
+    
+    **反馈**: 执行后更新持仓显示
+  </Card>
+  
+  <Card title="C按钮 (平仓)" icon="square">
+    **颜色**: 黄色 (clrGold)
+    
+    **功能**: 平仓该货币的所有持仓
+    
+    **执行**:
+    - 关闭所有相关持仓
+    - 删除所有相关挂单
+    
+    **安全**: 快速风险控制功能
+  </Card>
+  
+  <Card title="S按钮 (卖出)" icon="arrow-down">
+    **颜色**: 红色 (C'235,50,60')
+    
+    **功能**: 卖出该货币的篮子
+    
+    **执行**:
+    - 卖出所有直接货币对
+    - 买入所有反向货币对
+    
+    **策略**: 弱势货币交易策略
+  </Card>
+</CardGroup>
+
+## 趋势面板区域
+
+### 表格结构
+
+<CardGroup cols={2}>
+  <Card title="表格布局" icon="table">
+    **列数**: 6列固定布局
+    
+    **列宽**: 根据内容自动调整
+    
+    **表头**: 货币对、趋势、开盘、最高、最低、收盘
+    
+    **数据行**: 每个货币对占一行
+  </Card>
+  
+  <Card title="表格样式" icon="paint-brush">
+    **背景**: 深色背景 (C'30,30,30')
+    
+    **边框**: 灰色边框线
+    
+    **字体**: 12号字体
+    
+    **颜色**: 白色文字，数值根据涨跌变色
+  </Card>
+</CardGroup>
+
+### 趋势面板交互
+
+#### 操作按钮
+
+<CardGroup cols={3}>
+  <Card title="B按钮 (买入)" icon="arrow-up">
+    **位置**: 每行最右侧
+    
+    **尺寸**: 20×15像素
+    
+    **功能**: 买入该货币对
+    
+    **参数**: 使用设置面板中的交易参数
+  </Card>
+  
+  <Card title="C按钮 (平仓)" icon="square">
+    **位置**: B按钮左侧
+    
+    **尺寸**: 20×15像素
+    
+    **功能**: 平仓该货币对所有持仓
+    
+    **范围**: 只影响该特定货币对
+  </Card>
+  
+  <Card title="S按钮 (卖出)" icon="arrow-down">
+    **位置**: C按钮左侧
+    
+    **尺寸**: 20×15像素
+    
+    **功能**: 卖出该货币对
+    
+    **参数**: 使用设置面板中的交易参数
+  </Card>
+</CardGroup>
+
+#### 按钮点击处理
+
+```cpp
+void CBasket::OnChartEvent(const int id, const long &lparam, const double &dparam, const string &sparam) {
+    if(id == CHARTEVENT_OBJECT_CLICK) {
+        // 趋势面板按钮点击
+        if(StringFind(sparam, m_prefix+"TREND_") >= 0) {
+            string parts[];
+            int count = StringSplit(sparam, '_', parts);
+            if(count >= 3) {
+                string symbol = parts[2];
+                string action = parts[3];
+                
+                switch(action) {
+                    case "B":  // 买入
+                        ExecuteBuyOrder(symbol);
+                        break;
+                    case "C":  // 平仓
+                        ExecuteCloseOrder(symbol);
+                        break;
+                    case "S":  // 卖出
+                        ExecuteSellOrder(symbol);
+                        break;
+                }
+            }
+        }
+    }
+}
+```
+
+## 设置面板
+
+### 面板展开
+
+当点击设置按钮时，设置面板会在主面板旁边展开：
+
+#### 面板特性
+- **位置**: 主面板右侧或下方
+- **大小**: 根据内容动态调整
+- **拖拽**: 支持独立拖拽移动
+- **关闭**: 点击关闭按钮或主面板设置按钮
+
+#### 设置面板布局
+
+<CardGroup cols={2}>
+  <Card title="强度交易设置" icon="chart-bar">
+    **上阈值设置**: 强度触发上限
+    
+    **下阈值设置**: 强度触发下限
+    
+    **策略选择**: 买入/卖出策略选择
+    
+    **启用开关**: 强度交易开关
+  </Card>
+  
+  <Card title="波动率交易设置" icon="chart-mixed">
+    **波动率阈值**: 价格变化触发点数
+    
+    **上涨策略**: 顺势/逆势策略选择
+    
+    **下跌策略**: 顺势/逆势策略选择
+    
+    **启用开关**: 波动率交易开关
+  </Card>
+  
+  <Card title="交易参数设置" icon="sliders-h">
+    **篮子手数**: 篮子交易使用的手数
+    
+    **标准手数**: 单一货币对交易手数
+    
+    **止盈设置**: 统一止盈点数
+    
+    **止损设置**: 统一止损点数
+  </Card>
+  
+  <Card title="货币对管理" icon="list">
+    **货币对列表**: 自定义交易货币对
+    
+    **添加/删除**: 货币对列表管理
+    
+    **验证**: 货币对有效性检查
+    
+    **保存**: 设置保存和应用
+  </Card>
+</CardGroup>
+
+### 设置控件
+
+#### 数值输入控件
+
+<CardGroup cols={2}>
+  <Card title="SpinEdit控件" icon="edit">
+    **用途**: 数值参数输入
+    
+    **范围**: 自动验证数值范围
+    
+    **步长**: 支持步长调整
+    
+    **格式**: 自动格式化显示
+  </Card>
+  
+  <Card title="ComboBox控件" icon="list">
+    **用途**: 策略选择
+    
+    **选项**: 预定义选项列表
+    
+    **默认**: 智能默认值
+    
+    **验证**: 选项有效性检查
+  </Card>
+</CardGroup>
+
+## 分析面板
+
+### 面板展开
+
+当点击分析按钮时，分析面板会展开显示：
+
+#### 面板特性
+- **位置**: 主面板下方或右侧
+- **大小**: 固定尺寸或动态调整
+- **内容**: 价格图表和历史查询
+- **拖拽**: 支持独立拖拽移动
+
+#### 分析面板布局
+
+<CardGroup cols={2}>
+  <Card title="价格图表区" icon="chart-line">
+    **24小时图表**: 最近24小时价格走势
+    
+    **迷你图表**: 紧凑的折线图显示
+    
+    **实时更新**: 价格数据实时更新
+    
+    **交互**: 点击查看详细信息
+  </Card>
+  
+  <Card title="价格信息区" icon="info">
+    **OHLC数据**: 开高低收价格显示
+    
+    **变化统计**: 涨跌幅和波幅统计
+    
+    **格式化**: 自动格式化价格显示
+    
+    **颜色编码**: 涨跌颜色区分
+  </Card>
+  
+  <Card title="历史查询区" icon="search">
+    **货币对选择**: 下拉框选择货币对
+    
+    **日期选择**: 起始和结束日期选择
+    
+    **查询按钮**: 执行历史波幅查询
+    
+    **进度显示**: 查询进度指示
+  </Card>
+  
+  <Card title="波幅图表区" icon="chart-area">
+    **历史波幅图**: CEquityChart图表显示
+    
+    **统计信息**: 最大最小平均波幅
+    
+    **趋势线**: 波幅变化趋势线
+    
+    **导出功能**: 支持数据导出
+  </Card>
+</CardGroup>
+
+## 拖拽功能
+
+### 三个独立拖拽控制器
+
+<CardGroup cols={3}>
+  <Card title="主面板拖拽" icon="arrows-alt">
+    **控制器**: `m_drag`
+    
+    **拖拽区域**: 主面板标题栏
+    
+    **拖拽对象**: 所有主面板相关对象
+    
+    **边界**: 限制在图表区域内
+  </Card>
+  
+  <Card title="设置面板拖拽" icon="cog">
+    **控制器**: `m_set_drag`
+    
+    **拖拽区域**: 设置面板标题栏
+    
+    **拖拽对象**: 所有设置面板相关对象
+    
+    **独立性**: 与主面板独立移动
+  </Card>
+  
+  <Card title="分析面板拖拽" icon="chart-bar">
+    **控制器**: `m_ana_drag`
+    
+    **拖拽区域**: 分析面板标题栏
+    
+    **拖拽对象**: 所有分析面板相关对象
+    
+    **独立性**: 与其他面板独立移动
+  </Card>
+</CardGroup>
+
+### 拖拽实现
+
+```cpp
+void CBasket::SetDragObjects(void) {
+    // 主面板拖拽设置
+    string main_objects[];
+    CollectMainPanelObjects(main_objects);
+    m_drag.SetDragMode(m_prefix+"MAIN_PANEL", DRAG_MODE_FREE);
+    m_drag.CreateObjectGroup("BASKET_MAIN", main_objects, m_prefix+"MAIN_PANEL");
+    
+    // 设置面板拖拽设置
+    string set_objects[];
+    CollectSetPanelObjects(set_objects);
+    m_set_drag.SetDragMode(m_prefix+"SET_PANEL", DRAG_MODE_FREE);
+    m_set_drag.CreateObjectGroup("BASKET_SET", set_objects, m_prefix+"SET_PANEL");
+    
+    // 分析面板拖拽设置
+    string ana_objects[];
+    CollectAnaPanelObjects(ana_objects);
+    m_ana_drag.SetDragMode(m_prefix+"ANA_PANEL", DRAG_MODE_FREE);
+    m_ana_drag.CreateObjectGroup("BASKET_ANA", ana_objects, m_prefix+"ANA_PANEL");
+}
+```
+
+## 时间显示区域
+
+### 周期信息
+
+<CardGroup cols={2}>
+  <Card title="当前周期" icon="clock">
+    **显示内容**: 当前K线周期信息
+    
+    **格式**: "H4 2024-01-15 14:00"
+    
+    **更新**: 新K线生成时更新
+    
+    **用途**: 确认数据更新时机
+  </Card>
+  
+  <Card title="剩余时间" icon="hourglass">
+    **显示内容**: 距离下一根K线的剩余时间
+    
+    **格式**: "剩余: 2小时15分钟"
+    
+    **倒计时**: 实时倒计时显示
+    
+    **用途**: 预估下次数据更新时间
+  </Card>
+</CardGroup>
+
+## 响应式设计
+
+### 字体自适应
+
+<CardGroup cols={2}>
+  <Card title="DPI适配" icon="monitor">
+    **功能**: 根据屏幕DPI自动调整字体大小
+    
+    **公式**: `AutoFont() = (dpi > 96) ? (fontsize * dpi / 96) : fontsize`
+    
+    **效果**: 确保在不同分辨率下清晰显示
+  </Card>
+  
+  <Card title="多语言字体" icon="language">
+    **中文**: Microsoft YaHei字体
+    
+    **英文**: Arial字体
+    
+    **自动**: 根据界面语言自动选择
+  </Card>
+</CardGroup>
+
+### 布局自适应
+
+- **动态计算**: 根据内容动态计算面板大小
+- **最小尺寸**: 确保所有元素可见
+- **比例调整**: 保持界面元素的合理比例
+- **分辨率适配**: 适应不同屏幕分辨率
+
+## 性能优化
+
+### 位图资源管理
+
+<Tip>
+**优化策略**:
+- 及时释放不用的位图资源
+- 缓存常用的位图避免重复生成
+- 使用高效的位图绘制算法
+- 异步更新位图避免界面卡顿
+</Tip>
+
+### 事件处理优化
+
+<Warning>
+**注意事项**:
+- 避免在事件处理中进行耗时操作
+- 合理设置事件处理的优先级
+- 防止事件处理的递归调用
+- 及时清理无效的事件监听
+</Warning>

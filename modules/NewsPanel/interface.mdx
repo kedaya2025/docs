@@ -1,0 +1,577 @@
+---
+title: "界面操作指南"
+description: "新闻面板界面布局和交互功能的详细操作说明"
+---
+
+## 界面总览
+
+新闻面板采用多层级界面设计，包含主面板、设置面板、交易配置面板和事务列表面板四个主要界面。所有面板都支持拖拽移动，并提供丰富的交互功能。
+
+## 主面板结构
+
+### 面板尺寸和布局
+
+<CardGroup cols={2}>
+  <Card title="基本尺寸" icon="ruler">
+    **宽度**: m_W（动态计算）
+    
+    **高度**: m_H（动态计算）
+    
+    **标题栏**: m_header_h（30px）
+    
+    **步长**: m_step（5px间距）
+  </Card>
+  
+  <Card title="布局结构" icon="layout">
+    **标题栏**: 模块名称和控制按钮
+    
+    **新闻源区**: 新闻源选择按钮
+    
+    **筛选区**: 重要性和时间控制
+    
+    **新闻列表**: 分页显示新闻内容
+    
+    **导航区**: 分页控制和功能按钮
+  </Card>
+</CardGroup>
+
+### 标题栏区域
+
+#### 标题显示
+
+<Accordion title="多语言标题">
+**中文**: "TraderCopilot - 新闻面板"
+
+**英文**: "TraderCopilot - News Panel"
+
+**字体**: 根据语言自动选择合适字体
+
+**位置**: 左对齐，垂直居中
+</Accordion>
+
+#### 控制按钮
+
+<CardGroup cols={3}>
+  <Card title="关闭按钮" icon="x">
+    **位置**: 标题栏右侧
+    
+    **功能**: 关闭新闻面板
+    
+    **样式**: 20×20像素X图标
+  </Card>
+  
+  <Card title="设置按钮" icon="gear">
+    **位置**: 关闭按钮左侧
+    
+    **功能**: 打开设置面板
+    
+    **状态**: 支持开关状态显示
+  </Card>
+  
+  <Card title="交易按钮" icon="chart-line">
+    **位置**: 设置按钮左侧
+    
+    **功能**: 打开交易事务列表
+    
+    **状态**: 支持开关状态显示
+  </Card>
+</CardGroup>
+
+## 新闻源选择区
+
+### 新闻源按钮
+
+新闻源按钮水平排列在面板顶部：
+
+```
+[FXStreet] [金十数据] [FXCM]
+```
+
+#### 按钮状态
+
+<CardGroup cols={2}>
+  <Card title="选中状态" icon="check-circle">
+    **颜色**: 高亮显示（通常为蓝色或绿色）
+    
+    **效果**: 按钮背景色变化
+    
+    **功能**: 表示当前活跃的新闻源
+  </Card>
+  
+  <Card title="默认状态" icon="circle">
+    **颜色**: 默认灰色背景
+    
+    **效果**: 可点击状态
+    
+    **功能**: 可切换的新闻源选项
+  </Card>
+</CardGroup>
+
+#### 金十数据特殊按钮
+
+金十数据提供额外的内容类型切换：
+
+<Steps>
+  <Step title="选择金十数据">
+    点击"金十数据"主按钮
+  </Step>
+  <Step title="选择内容类型">
+    点击"新闻"或"事件"子按钮
+  </Step>
+  <Step title="内容更新">
+    系统自动更新为对应类型的内容
+  </Step>
+</Steps>
+
+## 筛选控制区
+
+### 重要性筛选
+
+<CardGroup cols={3}>
+  <Card title="高重要性" icon="exclamation-triangle">
+    **控件**: 复选框
+    
+    **标识**: m_prefix + "VIEW_HIGH"
+    
+    **默认**: 勾选状态
+  </Card>
+  
+  <Card title="中重要性" icon="exclamation">
+    **控件**: 复选框
+    
+    **标识**: m_prefix + "VIEW_MEDIUM"
+    
+    **默认**: 勾选状态
+  </Card>
+  
+  <Card title="低重要性" icon="info">
+    **控件**: 复选框
+    
+    **标识**: m_prefix + "VIEW_LOW"
+    
+    **默认**: 勾选状态
+  </Card>
+</CardGroup>
+
+### 时间控制
+
+#### 时区选择器
+
+<Accordion title="时区下拉框">
+**控件类型**: ComboBox
+
+**标识**: 时区选择下拉框
+
+**功能**: 选择显示时区
+
+**选项**: 全球主要时区列表
+
+**默认**: 系统时区或GMT
+</Accordion>
+
+#### 日期选择器
+
+<Accordion title="日期控件">
+**控件类型**: DatePicker
+
+**显示格式**: YYYY-MM-DD
+
+**功能**: 选择查看日期
+
+**默认**: 当前日期
+
+**操作**: 点击打开日历选择
+</Accordion>
+
+## 新闻列表区域
+
+### 列表项结构
+
+每个新闻项包含以下元素：
+
+#### 基本信息显示
+
+<CardGroup cols={2}>
+  <Card title="时间信息" icon="clock">
+    **位置**: 列表项左侧
+    
+    **格式**: HH:MM
+    
+    **时区**: 根据选择的时区显示
+    
+    **颜色**: 根据重要性变化
+  </Card>
+  
+  <Card title="重要性标识" icon="star">
+    **位置**: 时间右侧
+    
+    **显示**: 星级或颜色标识
+    
+    **等级**: 高/中/低三个等级
+    
+    **颜色**: 红/黄/绿色区分
+  </Card>
+</CardGroup>
+
+#### 新闻内容
+
+<CardGroup cols={2}>
+  <Card title="新闻标题" icon="newspaper">
+    **位置**: 列表项主体部分
+    
+    **字体**: 根据重要性调整大小
+    
+    **颜色**: 根据状态和重要性变化
+    
+    **换行**: 支持多行显示
+  </Card>
+  
+  <Card title="货币对标识" icon="coins">
+    **位置**: 标题下方或右侧
+    
+    **内容**: 相关货币对代码
+    
+    **格式**: USD, EUR, GBP等
+    
+    **颜色**: 区别于标题的颜色
+  </Card>
+</CardGroup>
+
+#### 交互按钮
+
+<CardGroup cols={2}>
+  <Card title="添加交易按钮" icon="plus">
+    **标识**: "+"符号
+    
+    **位置**: 列表项右侧
+    
+    **功能**: 添加基于该新闻的交易事务
+    
+    **状态**: 已添加时显示"TRADE"或"OVER"
+  </Card>
+  
+  <Card title="选择状态" icon="check">
+    **功能**: 点击选择/取消选择新闻项
+    
+    **视觉**: 选中时高亮显示
+    
+    **用途**: 用于批量操作或详细查看
+  </Card>
+</CardGroup>
+
+### 列表交互
+
+#### 点击事件处理
+
+<Steps>
+  <Step title="新闻项点击">
+    点击新闻项主体区域选择该新闻
+  </Step>
+  <Step title="状态更新">
+    选中的新闻项会高亮显示
+  </Step>
+  <Step title="重复点击">
+    再次点击相同项目取消选择
+  </Step>
+  <Step title="单选模式">
+    同时只能选择一个新闻项
+  </Step>
+</Steps>
+
+#### 代码实现
+
+```cpp
+if(StringFind(sparam, m_prefix + "ITEM_") >= 0) {
+    int clicked_item = GetClickedItemIndex(sparam);
+    if(clicked_item >= 0) {
+        m_clicked_item = clicked_item;
+        if(m_allow_select) {
+            if(clicked_item == m_selected_item) {
+                m_selected_item = -1;  // 取消选择
+            } else {
+                m_selected_item = clicked_item;  // 选择新项
+            }
+        }
+    }
+}
+```
+
+## 导航控制区
+
+### 分页导航
+
+<CardGroup cols={4}>
+  <Card title="上一页" icon="arrow-left">
+    **按钮**: "PREV"
+    
+    **功能**: 跳转到上一页
+    
+    **条件**: 当前页 > 1
+  </Card>
+  
+  <Card title="页码显示" icon="list-ol">
+    **格式**: "当前页 / 总页数"
+    
+    **示例**: "3 / 15"
+    
+    **功能**: 显示分页状态
+  </Card>
+  
+  <Card title="页码输入" icon="edit">
+    **控件**: 输入框
+    
+    **功能**: 直接输入页码跳转
+    
+    **验证**: 自动验证页码范围
+  </Card>
+  
+  <Card title="下一页" icon="arrow-right">
+    **按钮**: "NEXT"
+    
+    **功能**: 跳转到下一页
+    
+    **条件**: 当前页 < 总页数
+  </Card>
+</CardGroup>
+
+### 功能按钮
+
+<CardGroup cols={2}>
+  <Card title="更新按钮" icon="refresh">
+    **标识**: "UPDATE"
+    
+    **功能**: 手动刷新新闻数据
+    
+    **位置**: 导航区左侧
+    
+    **状态**: 更新时可能显示加载状态
+  </Card>
+  
+  <Card title="跳转按钮" icon="external-link">
+    **标识**: "GO"
+    
+    **功能**: 跳转到输入的页码
+    
+    **位置**: 页码输入框右侧
+    
+    **验证**: 自动验证并调整页码
+  </Card>
+</CardGroup>
+
+## 设置面板
+
+### 面板展开
+
+当点击设置按钮时，设置面板会展开：
+
+#### 面板特性
+- **位置**: 主面板右侧或下方
+- **大小**: 根据内容动态调整
+- **拖拽**: 支持独立拖拽移动
+- **关闭**: 点击关闭按钮或主面板设置按钮
+
+#### 设置项目
+
+<CardGroup cols={2}>
+  <Card title="新闻源配置" icon="newspaper">
+    **功能**: 选择和配置新闻源
+    
+    **控件**: 复选框组
+    
+    **选项**: FXStreet, 金十, FXCM
+  </Card>
+  
+  <Card title="语言设置" icon="language">
+    **功能**: 选择显示语言
+    
+    **控件**: 下拉框
+    
+    **选项**: 根据新闻源提供的语言
+  </Card>
+  
+  <Card title="货币对列表" icon="list">
+    **功能**: 设置关注的货币对
+    
+    **控件**: 文本输入框
+    
+    **格式**: 逗号分隔的货币对列表
+  </Card>
+  
+  <Card title="应用按钮" icon="check">
+    **功能**: 应用设置并关闭面板
+    
+    **效果**: 保存设置并更新新闻显示
+    
+    **位置**: 设置面板底部
+  </Card>
+</CardGroup>
+
+## 交易配置面板
+
+### 面板结构
+
+交易配置面板用于添加新闻交易事务：
+
+#### 事务类型选择
+
+<CardGroup cols={2}>
+  <Card title="开仓事务" icon="arrow-up">
+    **单选按钮**: "打开交易"
+    
+    **功能**: 配置开仓参数
+    
+    **参数**: 货币对、手数、订单类型等
+  </Card>
+  
+  <Card title="平仓事务" icon="arrow-down">
+    **单选按钮**: "关闭交易"
+    
+    **功能**: 配置平仓参数
+    
+    **参数**: 货币对（可选全部）
+  </Card>
+</CardGroup>
+
+#### 执行时机设置
+
+<CardGroup cols={2}>
+  <Card title="新闻发布前" icon="clock">
+    **单选按钮**: "新闻前"
+    
+    **时间设置**: 提前分钟数输入框
+    
+    **范围**: 0-120分钟
+  </Card>
+  
+  <Card title="新闻发布后" icon="forward">
+    **单选按钮**: "新闻后"
+    
+    **时间设置**: 延后分钟数输入框
+    
+    **范围**: 0-120分钟
+  </Card>
+</CardGroup>
+
+#### 交易参数输入
+
+| 参数 | 控件类型 | 说明 |
+|------|----------|------|
+| **货币对** | 输入框 | 交易的货币对符号 |
+| **手数** | 输入框 | 交易量，支持小数 |
+| **订单类型** | 下拉框 | 市价单或挂单类型 |
+| **止盈** | 输入框 | 止盈点数 |
+| **止损** | 输入框 | 止损点数 |
+| **挂单距离** | 输入框 | 挂单价格距离 |
+| **魔术号** | 输入框 | 订单标识号 |
+| **备注** | 输入框 | 订单备注信息 |
+
+## 事务列表面板
+
+### 列表显示
+
+事务列表以表格形式显示所有交易事务：
+
+#### 表格结构
+- **表头**: 固定表头，包含所有字段名称
+- **数据行**: 每个事务占一行
+- **滚动**: 支持垂直滚动查看更多事务
+- **排序**: 按添加时间排序
+
+#### 状态显示
+
+<CardGroup cols={2}>
+  <Card title="等待执行" icon="clock">
+    **状态**: "Wait"
+    
+    **颜色**: 红色文字
+    
+    **含义**: 事务尚未执行
+  </Card>
+  
+  <Card title="执行成功" icon="check">
+    **状态**: "Success"
+    
+    **颜色**: 紫色文字
+    
+    **含义**: 事务已成功执行
+  </Card>
+</CardGroup>
+
+### 列表操作
+
+#### 删除事务
+
+<Steps>
+  <Step title="定位事务">
+    在列表中找到要删除的事务行
+  </Step>
+  <Step title="点击删除">
+    点击该行最右侧的"X"删除按钮
+  </Step>
+  <Step title="确认删除">
+    系统立即删除该事务
+  </Step>
+  <Step title="更新显示">
+    列表自动更新显示剩余事务
+  </Step>
+</Steps>
+
+## 拖拽功能
+
+### 拖拽机制
+
+所有面板都支持拖拽移动：
+
+#### 拖拽区域
+- **主面板**: 标题栏区域
+- **设置面板**: 设置面板标题栏
+- **交易面板**: 交易配置面板标题栏
+- **事务列表**: 事务列表面板标题栏
+
+#### 拖拽特性
+- **自由移动**: 可在图表区域内自由移动
+- **边界限制**: 防止拖拽到屏幕外
+- **位置记忆**: 记住面板位置
+- **组合拖拽**: 主面板拖拽时其他面板跟随
+
+### 拖拽代码实现
+
+```cpp
+void SetDragObjects(CDrag* &dg, string main_obj, string &grops[], const string fix) {
+    dg.MemoryGroups();
+    dg.SetDragMode(main_obj, DRAG_MODE_FREE);
+    // 收集所有相关对象
+    // 创建拖拽组
+    if(ArraySize(grops) > 0) 
+        dg.CreateObjectGroup(GroupName, grops, main_obj);
+}
+```
+
+## 响应式设计
+
+### 字体自适应
+
+<CardGroup cols={2}>
+  <Card title="DPI适配" icon="monitor">
+    **功能**: 根据屏幕DPI自动调整字体大小
+    
+    **公式**: `(dpi > 96) ? (fontsize * dpi / 96) : fontsize`
+    
+    **效果**: 确保在不同分辨率下清晰显示
+  </Card>
+  
+  <Card title="多语言字体" icon="language">
+    **中文**: Microsoft YaHei字体
+    
+    **英文**: Arial字体
+    
+    **自动**: 根据内容语言自动选择
+  </Card>
+</CardGroup>
+
+### 布局自适应
+
+- **动态计算**: 根据内容动态计算面板大小
+- **最小尺寸**: 确保所有元素可见
+- **最大尺寸**: 防止面板过大影响图表
+- **比例调整**: 保持界面元素的合理比例

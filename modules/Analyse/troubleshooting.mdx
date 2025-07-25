@@ -1,0 +1,234 @@
+---
+title: "常见问题解决"
+description: "分析模块使用过程中的常见问题和解决方案"
+---
+
+## 数据加载问题
+
+### 模块打开后显示空白
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    点击分析按钮后，模块界面显示空白，没有任何图表或数据
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 账户没有交易历史记录
+    - 数据正在加载中（需要时间）
+    - MT5历史数据权限问题
+    - 系统内存不足
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **等待加载**: 首次使用可能需要30秒-2分钟
+    2. **检查历史**: 确认MT5中有交易历史记录
+    3. **重启EA**: 关闭并重新启动TraderCopilot
+    4. **检查权限**: 确保EA有访问历史数据的权限
+  </Accordion>
+</AccordionGroup>
+
+### 数据加载缓慢
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    模块打开后数据加载非常缓慢，等待时间过长
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 交易历史数据量过大
+    - 系统配置较低
+    - MT5平台响应慢
+    - 网络连接问题
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **耐心等待**: 大量数据需要更多处理时间
+    2. **关闭其他程序**: 释放系统资源
+    3. **检查网络**: 确保网络连接稳定
+    4. **重启MT5**: 重启MT5平台后再试
+  </Accordion>
+</AccordionGroup>
+
+## 图表显示问题
+
+### 权益曲线图异常
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    权益曲线图显示异常，如线条断裂、颜色错误等
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 数据计算错误
+    - 图表渲染问题
+    - 时间序列数据不连续
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **刷新数据**: 关闭并重新打开分析模块
+    2. **检查数据**: 验证MT5中的交易历史完整性
+    3. **重启系统**: 如果问题持续，重启MT5和EA
+  </Accordion>
+</AccordionGroup>
+
+### 雷达图数值异常
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    雷达图中某些数值显示为0%或100%，明显不符合实际情况
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 交易数据不完整
+    - 计算算法错误
+    - 特殊账户类型
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **验证数据**: 检查交易历史的完整性
+    2. **账户类型**: 确认账户类型是否支持
+    3. **重新计算**: 重启EA重新计算数据
+    4. **联系支持**: 如果问题持续，联系技术支持
+  </Accordion>
+</AccordionGroup>
+
+### 图表无法切换
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    点击左侧图表区域无法在权益曲线和回撤图之间切换
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 点击位置不正确
+    - 图表组件响应问题
+    - 系统资源不足
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **正确点击**: 确保点击在图表区域内
+    2. **多次尝试**: 可能需要点击几次
+    3. **重新加载**: 关闭并重新打开模块
+  </Accordion>
+</AccordionGroup>
+
+## 报告数据问题
+
+### 交易指标计算错误
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    28项交易指标中某些数值明显错误，与实际情况不符
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 数据源问题
+    - 计算公式错误
+    - 时区设置问题
+    - 账户货币单位问题
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **核对数据**: 与MT5中的数据进行对比
+    2. **检查时区**: 确认时区设置正确
+    3. **货币单位**: 确认账户货币设置
+    4. **重新计算**: 重启EA重新生成报告
+  </Accordion>
+</AccordionGroup>
+
+### YTD表格数据缺失
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    YTD表格中某些月份或年份的数据显示为空白
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 该时期没有交易活动
+    - 数据获取不完整
+    - 账户开设时间较晚
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **确认交易**: 检查该时期是否有交易记录
+    2. **数据范围**: 确认账户开设时间
+    3. **重新加载**: 刷新数据重新生成表格
+  </Accordion>
+</AccordionGroup>
+
+## 性能问题
+
+### 系统运行缓慢
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    打开分析模块后，整个MT5平台运行变慢
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 数据处理量过大
+    - 系统内存不足
+    - CPU使用率过高
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **关闭其他程序**: 释放系统资源
+    2. **分批处理**: 避免同时打开多个分析模块
+    3. **升级硬件**: 考虑升级内存或CPU
+    4. **定期清理**: 清理历史数据和临时文件
+  </Accordion>
+</AccordionGroup>
+
+### 内存使用过高
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    分析模块运行时内存使用量异常高
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 历史数据量过大
+    - 内存泄漏问题
+    - 图表渲染占用过多内存
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **定期重启**: 定期重启EA释放内存
+    2. **数据清理**: 清理过期的历史数据
+    3. **监控使用**: 使用任务管理器监控内存使用
+  </Accordion>
+</AccordionGroup>
+
+## 预防措施
+
+### 日常维护
+
+<Tip>
+**最佳实践**:
+- 定期重启EA（每周一次）
+- 保持MT5平台更新
+- 定期清理历史数据
+- 监控系统资源使用
+</Tip>
+
+### 数据备份
+
+<Warning>
+**重要提醒**:
+- 定期备份重要的分析结果
+- 保存关键的交易报告数据
+- 记录重要的分析发现
+</Warning>
+
+## 获取帮助
+
+如果以上解决方案都无法解决问题，请：
+
+1. **记录问题**: 详细记录问题现象和操作步骤
+2. **收集信息**: 包括系统配置、MT5版本、账户类型等
+3. **联系支持**: 通过官方渠道联系技术支持
+4. **提供截图**: 如果可能，提供问题截图
+
+<Info>
+技术支持联系方式：https://www.00123.com/
+</Info>

@@ -1,0 +1,117 @@
+---
+title: "分析模块概览"
+description: "交易历史分析和数据可视化的核心工具"
+---
+
+## 模块简介
+
+分析模块是 TraderCopilot 的数据分析核心，专门用于分析账户的交易历史数据。它能自动获取交易记录，生成专业的可视化图表和统计报告，帮助交易者深入了解自己的交易表现。
+
+## 主要功能
+
+<CardGroup cols={2}>
+  <Card title="可视化图表" icon="chart-line">
+    权益曲线图、回撤图、雷达图等多种图表
+  </Card>
+  <Card title="交易报告" icon="file-text">
+    28项核心交易指标的详细统计报告
+  </Card>
+  <Card title="YTD分析" icon="calendar">
+    年度至今增长率的月度和年度分析
+  </Card>
+  <Card title="历史统计" icon="database">
+    按日期统计的完整交易历史数据
+  </Card>
+</CardGroup>
+
+## 界面布局
+
+分析模块的界面分为四个主要区域：
+
+1. **标题栏** - 显示账户信息和关闭按钮
+2. **图表区域** - 左侧权益/回撤图，右侧雷达图
+3. **YTD表格** - 年度增长率数据表
+4. **交易报告** - 28项指标的详细报告
+
+## 快速使用
+
+<Steps>
+  <Step title="打开模块">
+    在主面板点击"分析"按钮
+  </Step>
+  <Step title="等待加载">
+    系统自动加载交易历史数据（可能需要几秒）
+  </Step>
+  <Step title="查看结果">
+    浏览生成的图表和报告
+  </Step>
+  <Step title="交互操作">
+    点击左侧图表可在权益曲线和回撤图间切换
+  </Step>
+</Steps>
+
+## 数据来源
+
+- **交易历史**: 从MT5平台获取完整的交易记录
+- **账户信息**: 实时账户余额、净值等数据
+- **时间范围**: 从账户开设至当前时间的所有数据
+
+## 核心特性
+
+### 自动化数据处理
+模块会自动：
+- 获取交易历史数据
+- 计算各项统计指标
+- 生成可视化图表
+- 更新YTD增长数据
+
+### 多维度分析
+提供以下分析维度：
+- **时间维度**: 按日、月、年统计
+- **交易类型**: 区分买入/卖出、盈利/亏损
+- **风险维度**: 回撤、连续亏损等风险指标
+- **行为分析**: 手动vs自动交易占比
+
+## 适用场景
+
+<Accordion title="交易复盘">
+通过详细的历史数据和图表，分析过往交易的成功和失败模式
+</Accordion>
+
+<Accordion title="策略评估">
+评估不同时期交易策略的效果，识别最有效的交易方法
+</Accordion>
+
+<Accordion title="风险评估">
+通过回撤分析和风险指标，了解交易风险水平
+</Accordion>
+
+<Accordion title="绩效报告">
+生成专业的交易绩效报告，用于记录或展示
+</Accordion>
+
+## 注意事项
+
+<Warning>
+**数据要求**
+- 需要完整的MT5交易历史数据
+- 首次使用可能需要较长加载时间
+- 数据量大时建议在高配置设备上使用
+</Warning>
+
+## 模块文档
+
+<CardGroup cols={2}>
+  <Card title="图表功能" href="/modules/analyse/charts">
+    权益曲线、回撤图、雷达图的详细说明
+  </Card>
+  <Card title="交易报告" href="/modules/analyse/reports">
+    28项交易指标的含义和计算方法
+  </Card>
+  <Card title="YTD分析" href="/modules/analyse/ytd-analysis">
+    年度增长率分析功能详解
+  </Card>
+  <Card title="问题解决" href="/modules/analyse/troubleshooting">
+    常见问题和解决方案
+  </Card>
+</CardGroup>

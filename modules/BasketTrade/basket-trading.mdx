@@ -1,0 +1,547 @@
+---
+title: "篮子交易系统"
+description: "篮子交易策略和自动交易配置详解"
+---
+
+## 功能概述
+
+篮子交易系统是基于货币强度理论的高级交易策略，通过同时交易一篮子相关货币对来分散风险并提高胜率。系统支持手动篮子交易和两种自动交易策略：强度交易和波动率交易，为用户提供专业的货币篮子管理工具。
+
+## 篮子交易理论
+
+### 基本概念
+
+<CardGroup cols={2}>
+  <Card title="篮子交易定义" icon="shopping-basket">
+    **概念**: 同时交易一组相关货币对的交易策略
+    
+    **目的**: 利用货币间的相关性分散风险
+    
+    **优势**: 提高胜率，降低单一货币对风险
+    
+    **原理**: 基于货币强度的相对变化
+  </Card>
+  
+  <Card title="相关性原理" icon="link">
+    **正相关**: 同一基础货币的货币对趋势相似
+    
+    **负相关**: 不同基础货币的货币对趋势相反
+    
+    **强度传导**: 强势货币带动相关货币对上涨
+    
+    **风险分散**: 多个货币对分散单一风险
+  </Card>
+</CardGroup>
+
+### 篮子构成原理
+
+#### 货币篮子定义
+
+<Accordion title="直接货币对 (Direct Pairs)">
+**定义**: 目标货币作为基础货币的货币对
+
+**示例**: EUR篮子的直接货币对
+- EURAUD, EURCAD, EURCHF, EURGBP
+- EURJPY, EURNZD, EURUSD
+
+**交易逻辑**: 
+- EUR强势时买入这些货币对
+- EUR弱势时卖出这些货币对
+</Accordion>
+
+<Accordion title="反向货币对 (Reverse Pairs)">
+**定义**: 目标货币作为报价货币的货币对
+
+**示例**: GBP篮子的反向货币对
+- EURGBP (EUR/GBP)
+
+**交易逻辑**:
+- GBP强势时卖出这些货币对
+- GBP弱势时买入这些货币对
+</Accordion>
+
+## 篮子配置
+
+### 8个货币篮子
+
+<CardGroup cols={2}>
+  <Card title="主要货币篮子" icon="coins">
+    **EUR篮子**: 7个直接货币对
+    ```
+    EURAUD, EURCAD, EURCHF, EURGBP
+    EURJPY, EURNZD, EURUSD
+    ```
+    
+    **USD篮子**: 7个直接货币对
+    ```
+    USDCAD, USDCHF, USDJPY
+    AUDUSD, EURUSD, GBPUSD, NZDUSD (反向)
+    ```
+    
+    **GBP篮子**: 6个直接 + 1个反向
+    ```
+    直接: GBPAUD, GBPCAD, GBPCHF
+          GBPJPY, GBPNZD, GBPUSD
+    反向: EURGBP
+    ```
+  </Card>
+  
+  <Card title="其他货币篮子" icon="wallet">
+    **JPY篮子**: 7个直接货币对
+    ```
+    AUDJPY, CADJPY, CHFJPY, EURJPY
+    GBPJPY, NZDJPY, USDJPY
+    ```
+    
+    **CHF篮子**: 1个直接 + 6个反向
+    ```
+    直接: CHFJPY
+    反向: AUDCHF, CADCHF, EURCHF
+          GBPCHF, NZDCHF, USDCHF
+    ```
+    
+    **商品货币篮子**: CAD, AUD, NZD
+    ```
+    各自包含7个或6个相关货币对
+    ```
+  </Card>
+</CardGroup>
+
+### 篮子数据结构
+
+#### CurrencyBasket结构
+
+```cpp
+struct CurrencyBasket {
+    string direct[];    // 直接货币对数组
+    string reverse[];   // 反向货币对数组
+};
+
+CurrencyBasket m_baskets[8];  // 8个货币篮子
+```
+
+#### 篮子初始化
+
+```cpp
+void CBasket::InitializeBaskets(void) {
+    // EUR篮子
+    string EUR[7] = {"EURAUD","EURCAD","EURCHF","EURGBP",
+                     "EURJPY","EURNZD","EURUSD"};
+    ArrayCopy(m_baskets[0].direct, EUR);
+    
+    // GBP篮子
+    string GBP[6] = {"GBPAUD","GBPCAD","GBPCHF",
+                     "GBPJPY","GBPNZD","GBPUSD"};
+    string GBP_R[1] = {"EURGBP"};
+    ArrayCopy(m_baskets[1].direct, GBP);
+    ArrayCopy(m_baskets[1].reverse, GBP_R);
+    
+    // ... 其他篮子初始化
+}
+```
+
+## 手动篮子交易
+
+### 交易操作
+
+<CardGroup cols={3}>
+  <Card title="买入篮子" icon="arrow-up">
+    **操作**: 点击强度卡片的B按钮
+    
+    **执行逻辑**:
+    - 买入所有直接货币对
+    - 卖出所有反向货币对
+    
+    **适用场景**: 该货币强度上升时
+    
+    **风险**: 同时开启多个仓位
+  </Card>
+  
+  <Card title="卖出篮子" icon="arrow-down">
+    **操作**: 点击强度卡片的S按钮
+    
+    **执行逻辑**:
+    - 卖出所有直接货币对
+    - 买入所有反向货币对
+    
+    **适用场景**: 该货币强度下降时
+    
+    **机会**: 利用弱势货币反弹
+  </Card>
+  
+  <Card title="平仓篮子" icon="square">
+    **操作**: 点击强度卡片的C按钮
+    
+    **执行逻辑**:
+    - 关闭该货币所有相关持仓
+    - 删除该货币所有相关挂单
+    
+    **适用场景**: 风险控制或获利了结
+    
+    **安全**: 快速退出所有相关仓位
+  </Card>
+</CardGroup>
+
+### 篮子交易代码实现
+
+#### 买入篮子
+
+```cpp
+void CBasket::BuyBasket(string &pairs[], int magic, string comment) {
+    for(int i = 0; i < ArraySize(pairs); i++) {
+        string symbol = pairs[i];
+        double ask = SymbolInfoDouble(symbol, SYMBOL_ASK);
+        double points = SymbolInfoDouble(symbol, SYMBOL_POINT);
+        int digits = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);
+        int level = (int)SymbolInfoInteger(symbol, SYMBOL_TRADE_STOPS_LEVEL);
+        
+        double sl = (m_bk_sl > 0) ? 
+            NormalizeDouble(ask - fmax(level, m_bk_sl) * points, digits) : 0;
+        double tp = (m_bk_tp > 0) ? 
+            NormalizeDouble(ask + fmax(level, m_bk_tp) * points, digits) : 0;
+            
+        m_td.PositionOpen(symbol, ORDER_TYPE_BUY, m_bk_valume, 
+                         sl, tp, INT_MAX, magic, comment);
+    }
+}
+```
+
+#### 卖出篮子
+
+```cpp
+void CBasket::SellBasket(string &pairs[], int magic, string comment) {
+    for(int i = 0; i < ArraySize(pairs); i++) {
+        string symbol = pairs[i];
+        double bid = SymbolInfoDouble(symbol, SYMBOL_BID);
+        double points = SymbolInfoDouble(symbol, SYMBOL_POINT);
+        int digits = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);
+        int level = (int)SymbolInfoInteger(symbol, SYMBOL_TRADE_STOPS_LEVEL);
+        
+        double sl = (m_bk_sl > 0) ? 
+            NormalizeDouble(bid + fmax(level, m_bk_sl) * points, digits) : 0;
+        double tp = (m_bk_tp > 0) ? 
+            NormalizeDouble(bid - fmax(level, m_bk_tp) * points, digits) : 0;
+            
+        m_td.PositionOpen(symbol, ORDER_TYPE_SELL, m_bk_valume, 
+                         sl, tp, INT_MAX, magic, comment);
+    }
+}
+```
+
+## 自动交易策略
+
+### 强度交易策略
+
+<CardGroup cols={2}>
+  <Card title="上阈值策略" icon="trending-up">
+    **触发条件**: 货币强度 ≥ 设定上阈值
+    
+    **执行策略**: 
+    - 策略0: 买入该货币篮子
+    - 策略1: 卖出该货币篮子
+    
+    **执行周期**: H4周期检查
+    
+    **魔术号**: 9200 + 货币索引
+  </Card>
+  
+  <Card title="下阈值策略" icon="trending-down">
+    **触发条件**: 货币强度 ≤ 设定下阈值
+    
+    **执行策略**:
+    - 策略0: 买入该货币篮子
+    - 策略1: 卖出该货币篮子
+    
+    **执行周期**: H4周期检查
+    
+    **魔术号**: 9200 + 货币索引
+  </Card>
+</CardGroup>
+
+#### 强度交易实现
+
+```cpp
+void CBasket::OnTimer(void) {
+    if(m_use_stg_up || m_use_stg_down) {
+        int total = ArraySize(m_ratio);
+        for(int i = 0; i < total; i++) {
+            StrengthRatio ratio = m_ratio[i];
+            string pair = ratio.Pair;
+            datetime time = iTime(NULL, PERIOD_H4, 0);
+            int magics = 9200 + i;
+            string comment = "Auto Basket-" + pair;
+            
+            if(m_curr_itime[i] != time) {
+                // 上阈值策略
+                if(m_use_stg_up && ratio.Ratio >= m_strengthindex_up) {
+                    string d[], r[];
+                    m_strength.CheckPair(d, m_baskets[i].direct);
+                    m_strength.CheckPair(r, m_baskets[i].reverse);
+                    
+                    switch(m_up_stg_idx) {
+                        case 0:  // 买入策略
+                            BuyBasket(d, magics, comment + "-BUY");
+                            SellBasket(r, magics, comment + "-BUY");
+                            break;
+                        case 1:  // 卖出策略
+                            SellBasket(d, magics, comment + "-SELL");
+                            BuyBasket(r, magics, comment + "-SELL");
+                            break;
+                    }
+                    m_curr_itime[i] = time;
+                }
+                
+                // 下阈值策略 (类似逻辑)
+                // ...
+            }
+        }
+    }
+}
+```
+
+### 波动率交易策略
+
+<CardGroup cols={2}>
+  <Card title="上涨策略" icon="chart-line">
+    **触发条件**: 日内涨幅 ≥ 设定点数
+    
+    **计算公式**: 
+    ```
+    change = (close - open) / point
+    ```
+    
+    **执行策略**:
+    - 策略0: 顺势买入
+    - 策略1: 逆势卖出
+    
+    **魔术号**: 9300 + 货币对索引
+  </Card>
+  
+  <Card title="下跌策略" icon="chart-line-down">
+    **触发条件**: 日内跌幅 ≥ 设定点数
+    
+    **计算公式**:
+    ```
+    change = (close - open) / point
+    ```
+    
+    **执行策略**:
+    - 策略0: 逆势买入
+    - 策略1: 顺势卖出
+    
+    **魔术号**: 9300 + 货币对索引
+  </Card>
+</CardGroup>
+
+#### 波动率交易实现
+
+```cpp
+if(m_use_vc_up || m_use_vc_down) {
+    for(int i = 0; i < ArraySize(m_pairs); i++) {
+        string symbol = m_pairs[i];
+        double close = iClose(symbol, PERIOD_D1, 0);
+        double open = iOpen(symbol, PERIOD_D1, 0);
+        double point = SymbolInfoDouble(symbol, SYMBOL_POINT);
+        int change = (point != 0) ? (int)((close - open) / point) : 0;
+        
+        if(change == 0) continue;
+        
+        datetime time = iTime(NULL, PERIOD_H4, 0);
+        int magic = 9300 + i;
+        string comment = "Auto-" + symbol;
+        
+        if(m_sym_itime[i] != time) {
+            // 上涨策略
+            if(m_use_vc_up && change >= fabs(m_vc_value)) {
+                switch(m_up_vc_idx) {
+                    case 0:  // 顺势买入
+                        // 买入逻辑
+                        break;
+                    case 1:  // 逆势卖出
+                        // 卖出逻辑
+                        break;
+                }
+                m_sym_itime[i] = time;
+            }
+            
+            // 下跌策略 (类似逻辑)
+            // ...
+        }
+    }
+}
+```
+
+## 交易参数配置
+
+### 基础参数
+
+<CardGroup cols={2}>
+  <Card title="交易手数" icon="scale-balanced">
+    **参数**: `m_bk_valume`
+    
+    **类型**: double
+    
+    **范围**: 0.01 - 账户最大手数
+    
+    **说明**: 每个货币对的交易手数
+    
+    **风险**: 篮子交易会放大手数效应
+  </Card>
+  
+  <Card title="止盈设置" icon="target">
+    **参数**: `m_bk_tp`
+    
+    **类型**: int (点数)
+    
+    **范围**: 0 - 1000点
+    
+    **说明**: 统一的止盈点数，0表示不设置
+    
+    **计算**: 考虑最小距离要求
+  </Card>
+  
+  <Card title="止损设置" icon="shield-alt">
+    **参数**: `m_bk_sl`
+    
+    **类型**: int (点数)
+    
+    **范围**: 0 - 1000点
+    
+    **说明**: 统一的止损点数，0表示不设置
+    
+    **重要性**: 篮子交易的风险控制关键
+  </Card>
+</CardGroup>
+
+### 强度交易参数
+
+<CardGroup cols={2}>
+  <Card title="强度阈值" icon="sliders-h">
+    **上阈值**: `m_strengthindex_up`
+    - 范围: 5.0 - 10.0
+    - 默认: 8.0
+    - 说明: 触发强势交易的强度值
+    
+    **下阈值**: `m_strengthindex_down`
+    - 范围: 0.0 - 5.0
+    - 默认: 2.0
+    - 说明: 触发弱势交易的强度值
+  </Card>
+  
+  <Card title="策略选择" icon="strategy">
+    **上阈值策略**: `m_up_stg_idx`
+    - 0: 买入篮子策略
+    - 1: 卖出篮子策略
+    
+    **下阈值策略**: `m_down_stg_idx`
+    - 0: 买入篮子策略
+    - 1: 卖出篮子策略
+  </Card>
+</CardGroup>
+
+### 波动率交易参数
+
+<CardGroup cols={2}>
+  <Card title="波动率阈值" icon="chart-mixed">
+    **参数**: `m_vc_value`
+    
+    **类型**: int (点数)
+    
+    **范围**: 10 - 500点
+    
+    **说明**: 触发波动率交易的最小变化点数
+    
+    **计算**: 基于日内开盘价和当前价格差
+  </Card>
+  
+  <Card title="标准手数" icon="balance-scale">
+    **参数**: `m_std_valume`
+    
+    **类型**: double
+    
+    **说明**: 波动率交易使用的标准手数
+    
+    **区别**: 与篮子交易手数可以不同
+  </Card>
+</CardGroup>
+
+## 风险管理
+
+### 篮子交易风险
+
+<Warning>
+**主要风险**:
+- **资金需求大**: 同时开启多个仓位需要充足保证金
+- **相关性风险**: 相关货币对可能同时亏损
+- **流动性风险**: 某些货币对可能流动性不足
+- **滑点风险**: 同时下单可能导致滑点增大
+</Warning>
+
+### 风险控制措施
+
+<CardGroup cols={2}>
+  <Card title="仓位控制" icon="chart-pie">
+    **手数限制**: 根据账户资金设置合理手数
+    
+    **篮子限制**: 避免同时交易过多篮子
+    
+    **相关性检查**: 避免高度相关的篮子同时交易
+    
+    **资金分配**: 为篮子交易预留充足资金
+  </Card>
+  
+  <Card title="止损保护" icon="shield">
+    **统一止损**: 为所有篮子交易设置止损
+    
+    **动态调整**: 根据市场波动调整止损
+    
+    **快速平仓**: 提供一键平仓功能
+    
+    **监控预警**: 实时监控篮子盈亏状况
+  </Card>
+</CardGroup>
+
+## 实战应用
+
+### 应用场景
+
+<Accordion title="趋势跟踪">
+**策略**: 强势货币篮子买入，弱势货币篮子卖出
+
+**优势**: 利用货币强度趋势获利
+
+**风险**: 趋势反转时可能面临较大亏损
+
+**适用**: 明确趋势的市场环境
+</Accordion>
+
+<Accordion title="均值回归">
+**策略**: 极强货币篮子卖出，极弱货币篮子买入
+
+**优势**: 利用强度极值的回归特性
+
+**风险**: 强度可能继续极化
+
+**适用**: 震荡市场或强度极值情况
+</Accordion>
+
+<Accordion title="事件驱动">
+**策略**: 基于重大事件的篮子交易
+
+**优势**: 利用事件对特定货币的影响
+
+**风险**: 事件影响可能超出预期
+
+**适用**: 央行决议、经济数据等重大事件
+</Accordion>
+
+### 最佳实践
+
+<Tip>
+**交易建议**:
+- 在模拟账户中充分测试篮子交易策略
+- 从小手数开始，逐步增加交易规模
+- 密切关注相关货币对的基本面变化
+- 定期评估和调整交易参数
+- 保持充足的账户资金避免强制平仓
+</Tip>

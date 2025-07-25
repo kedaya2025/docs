@@ -1,0 +1,458 @@
+---
+title: "货币强度分析系统"
+description: "货币强度计算原理和可视化显示详解"
+---
+
+## 功能概述
+
+货币强度分析系统是篮子交易模块的核心功能，基于CStrength类实现专业的货币强度计算。系统实时分析8种主要货币的相对强弱关系，通过可视化界面直观展示强度变化，为篮子交易策略提供科学依据。
+
+## 货币强度理论
+
+### 基本概念
+
+<CardGroup cols={2}>
+  <Card title="货币强度定义" icon="chart-bar">
+    **概念**: 某种货币相对于其他货币的综合表现
+    
+    **计算基础**: 该货币与其他货币组成的所有货币对的价格变化
+    
+    **强度范围**: 0-10的标准化数值
+    
+    **相对性**: 强度是相对概念，需要对比分析
+  </Card>
+  
+  <Card title="强度计算原理" icon="calculator">
+    **数据来源**: 所有相关货币对的价格数据
+    
+    **计算方法**: 加权平均各货币对的价格变化
+    
+    **标准化**: 将结果标准化到0-10范围
+    
+    **实时更新**: 根据设定周期自动更新
+  </Card>
+</CardGroup>
+
+### 强度计算公式
+
+#### 基础强度计算
+
+对于货币X，其强度计算公式为：
+
+$$
+\text{Strength}_X = \frac{\sum_{i=1}^{n} w_i \times \Delta P_i}{\sum_{i=1}^{n} w_i}
+$$
+
+其中：
+- $\Delta P_i$ = 货币对i的价格变化率
+- $w_i$ = 货币对i的权重
+- $n$ = 包含货币X的货币对数量
+
+#### 标准化处理
+
+$$
+\text{NormalizedStrength} = \frac{\text{RawStrength} - \text{MinStrength}}{\text{MaxStrength} - \text{MinStrength}} \times 10
+$$
+
+## 支持的货币
+
+### 8种主要货币
+
+<CardGroup cols={2}>
+  <Card title="欧洲货币" icon="euro-sign">
+    **EUR (欧元)**
+    - 欧洲统一货币
+    - 全球第二大储备货币
+    - 相关货币对: 7个
+    
+    **CHF (瑞士法郎)**
+    - 传统避险货币
+    - 瑞士国家货币
+    - 相关货币对: 7个
+    
+    **GBP (英镑)**
+    - 英国货币
+    - 传统强势货币
+    - 相关货币对: 7个
+  </Card>
+  
+  <Card title="其他主要货币" icon="coins">
+    **USD (美元)**
+    - 全球储备货币
+    - 流动性最高
+    - 相关货币对: 7个
+    
+    **JPY (日元)**
+    - 亚洲主要货币
+    - 避险货币属性
+    - 相关货币对: 7个
+    
+    **CAD (加元)**
+    - 商品货币
+    - 与原油相关性高
+    - 相关货币对: 7个
+    
+    **AUD (澳元)**
+    - 商品货币
+    - 高利率货币
+    - 相关货币对: 7个
+    
+    **NZD (纽元)**
+    - 商品货币
+    - 高波动性
+    - 相关货币对: 6个
+  </Card>
+</CardGroup>
+
+### 货币对配置
+
+#### EUR篮子货币对
+
+```cpp
+string EUR[7] = {"EURAUD","EURCAD","EURCHF","EURGBP","EURJPY","EURNZD","EURUSD"};
+```
+
+#### GBP篮子货币对
+
+```cpp
+string GBP[6] = {"GBPAUD","GBPCAD","GBPCHF","GBPJPY","GBPNZD","GBPUSD"};
+string GBP_R[1] = {"EURGBP"};  // 反向货币对
+```
+
+#### 其他货币篮子
+
+| 货币 | 直接货币对数量 | 反向货币对数量 | 总计 |
+|------|----------------|----------------|------|
+| **CHF** | 1 | 6 | 7 |
+| **JPY** | 7 | 0 | 7 |
+| **USD** | 7 | 0 | 7 |
+| **CAD** | 7 | 0 | 7 |
+| **AUD** | 7 | 0 | 7 |
+| **NZD** | 6 | 0 | 6 |
+
+## 强度可视化显示
+
+### 强度卡片设计
+
+<CardGroup cols={2}>
+  <Card title="卡片尺寸" icon="ruler">
+    **宽度**: 119像素
+    
+    **高度**: 74像素
+    
+    **布局**: 左侧色条 + 中间信息 + 右侧按钮
+    
+    **边框**: 灰色边框线
+  </Card>
+  
+  <Card title="色彩方案" icon="palette">
+    **背景色**: 深灰色 (C'30,30,30')
+    
+    **强势色**: 绿色系 (C'20,61,54')
+    
+    **弱势色**: 红色系 (C'61,28,31')
+    
+    **按钮色**: 绿/黄/红三色按钮
+  </Card>
+</CardGroup>
+
+### 渐变色条系统
+
+#### 色条设计
+
+<Accordion title="10级渐变色">
+**色彩定义**: 从绿到红的10级渐变
+
+```cpp
+color bar_colors[] = {
+    C'0,255,64',    // 最强 - 亮绿
+    C'0,255,0',     // 强 - 绿色
+    C'64,255,0',    // 较强 - 黄绿
+    C'128,255,0',   // 中强 - 黄绿
+    C'191,255,0',   // 中等 - 黄色
+    C'255,255,0',   // 中等 - 黄色
+    C'255,191,0',   // 中弱 - 橙黄
+    C'255,128,0',   // 较弱 - 橙色
+    C'255,64,0',    // 弱 - 橙红
+    C'255,0,0'      // 最弱 - 红色
+};
+```
+
+**激活逻辑**: 根据强度值点亮相应数量的色块
+</Accordion>
+
+<Accordion title="色条激活算法">
+**激活条数计算**:
+```cpp
+int active_bars = (int)MathFloor(strength_ratio) + 1;
+```
+
+**激活规则**:
+- 强度0: 显示1条(最下方红色)
+- 强度5: 显示6条(下方6条)
+- 强度9: 显示10条(全部点亮)
+
+**视觉效果**: 从下往上逐渐点亮，直观显示强度等级
+</Accordion>
+
+### 数值显示系统
+
+<CardGroup cols={2}>
+  <Card title="货币代码显示" icon="font">
+    **位置**: 卡片中上部分
+    
+    **字体**: 15号字体
+    
+    **颜色**: 白色文字
+    
+    **背景**: 深灰色背景 (C'64,64,64')
+  </Card>
+  
+  <Card title="强度数值显示" icon="hashtag">
+    **位置**: 卡片中下部分
+    
+    **格式**: 保留2位小数
+    
+    **字体**: 13号字体
+    
+    **背景色**: 根据强度值变化
+    - 强度>5: 绿色背景
+    - 强度≤5: 红色背景
+  </Card>
+</CardGroup>
+
+## 实时更新机制
+
+### 更新触发
+
+<CardGroup cols={2}>
+  <Card title="定时器更新" icon="clock">
+    **触发条件**: 新K线生成时
+    
+    **检查逻辑**: 
+    ```cpp
+    datetime date = iTime(NULL, m_period, 0);
+    if(date != m_last_date) {
+        m_last_date = date;
+        m_strength.GetStrength(m_ratio);
+    }
+    ```
+    
+    **更新频率**: 根据设定周期(默认H4)
+  </Card>
+  
+  <Card title="界面更新" icon="refresh">
+    **更新内容**: 强度卡片的位图资源
+    
+    **更新方法**:
+    ```cpp
+    ObjectSetString(0, m_prefix+"STRENGTH_"+pair, 
+                   OBJPROP_BMPFILE, GetStrengthRes(pair));
+    ```
+    
+    **重绘**: 自动重绘图表显示最新数据
+  </Card>
+</CardGroup>
+
+### 数据流程
+
+<Steps>
+  <Step title="价格数据获取">
+    从MT5获取所有相关货币对的最新价格数据
+  </Step>
+  <Step title="强度计算">
+    CStrength类计算各货币的相对强度值
+  </Step>
+  <Step title="数据存储">
+    将计算结果存储到StrengthRatio结构数组
+  </Step>
+  <Step title="界面更新">
+    根据新的强度值重新生成强度卡片位图
+  </Step>
+  <Step title="显示刷新">
+    更新界面显示，重绘图表
+  </Step>
+</Steps>
+
+## 强度数据结构
+
+### StrengthRatio结构
+
+```cpp
+struct StrengthRatio {
+    string Pair;        // 货币代码
+    double Ratio;       // 强度值 (0-10)
+    datetime Time;      // 计算时间
+    // 其他相关数据...
+};
+```
+
+### 数据管理
+
+<CardGroup cols={2}>
+  <Card title="数据存储" icon="database">
+    **数组**: `StrengthRatio m_ratio[8]`
+    
+    **索引**: 按货币顺序存储
+    - [0] = EUR
+    - [1] = GBP  
+    - [2] = CHF
+    - [3] = JPY
+    - [4] = USD
+    - [5] = CAD
+    - [6] = AUD
+    - [7] = NZD
+  </Card>
+  
+  <Card title="数据访问" icon="search">
+    **获取单个货币强度**:
+    ```cpp
+    StrengthRatio ratio;
+    m_strength.GetStrength(ratio, "EUR");
+    ```
+    
+    **获取所有货币强度**:
+    ```cpp
+    m_strength.GetStrength(m_ratio);
+    ```
+  </Card>
+</CardGroup>
+
+## 强度分析应用
+
+### 强度对比分析
+
+<Accordion title="强势货币识别">
+**识别方法**: 强度值>7的货币
+
+**交易策略**: 买入强势货币篮子
+
+**风险控制**: 避免过度集中于单一强势货币
+
+**示例**: EUR强度8.5，USD强度3.2，建议买入EUR相关货币对
+</Accordion>
+
+<Accordion title="弱势货币识别">
+**识别方法**: 强度值&lt;3的货币
+
+**交易策略**: 卖出弱势货币篮子
+
+**机会把握**: 弱势货币可能存在反弹机会
+
+**示例**: JPY强度1.8，AUD强度7.3，建议卖出JPY相关货币对
+</Accordion>
+
+### 强度变化趋势
+
+<CardGroup cols={2}>
+  <Card title="强度上升趋势" icon="trending-up">
+    **特征**: 连续几个周期强度值上升
+    
+    **交易信号**: 考虑买入该货币篮子
+    
+    **确认条件**: 强度突破关键阈值
+    
+    **风险**: 可能存在超买风险
+  </Card>
+  
+  <Card title="强度下降趋势" icon="trending-down">
+    **特征**: 连续几个周期强度值下降
+    
+    **交易信号**: 考虑卖出该货币篮子
+    
+    **确认条件**: 强度跌破关键阈值
+    
+    **机会**: 可能存在超卖反弹机会
+  </Card>
+</CardGroup>
+
+## 交互操作
+
+### 强度卡片按钮
+
+<CardGroup cols={3}>
+  <Card title="B按钮 (买入)" icon="arrow-up">
+    **位置**: 卡片右上角
+    
+    **颜色**: 绿色 (C'9,153,125')
+    
+    **功能**: 买入该货币的篮子
+    
+    **点击检测**: 
+    ```cpp
+    if(rel_y >= b_start_y && rel_y < b_end_y)
+        return 1; // B按钮
+    ```
+  </Card>
+  
+  <Card title="C按钮 (平仓)" icon="square">
+    **位置**: 卡片右中角
+    
+    **颜色**: 黄色 (clrGold)
+    
+    **功能**: 平仓该货币的所有持仓
+    
+    **点击检测**:
+    ```cpp
+    if(rel_y >= c_start_y && rel_y < c_end_y)
+        return 2; // C按钮
+    ```
+  </Card>
+  
+  <Card title="S按钮 (卖出)" icon="arrow-down">
+    **位置**: 卡片右下角
+    
+    **颜色**: 红色 (C'235,50,60')
+    
+    **功能**: 卖出该货币的篮子
+    
+    **点击检测**:
+    ```cpp
+    if(rel_y >= s_start_y && rel_y < s_end_y)
+        return 3; // S按钮
+    ```
+  </Card>
+</CardGroup>
+
+### 点击检测算法
+
+#### 按钮区域计算
+
+```cpp
+int CBasket::CheckStrengthPanelClick(const int rel_x, const int rel_y) {
+    const int margin = 2;
+    const int bar_width = 22;
+    const int button_spacing = 1;
+    
+    // 计算按钮区域起始X坐标
+    int button_start_x = 1+2 + bar_width + margin + 65 + margin;
+    
+    if(rel_x >= button_start_x && rel_x < button_start_x + bar_width) {
+        // 检测Y坐标确定具体按钮
+        // ... 按钮检测逻辑
+    }
+    return 0; // 未点击按钮
+}
+```
+
+## 性能优化
+
+### 计算优化
+
+<Tip>
+**优化策略**:
+- 只在新K线生成时重新计算强度
+- 缓存计算结果避免重复计算
+- 使用高效的数据结构存储强度数据
+- 异步更新界面避免阻塞主线程
+</Tip>
+
+### 显示优化
+
+<Warning>
+**注意事项**:
+- 位图资源需要及时释放避免内存泄漏
+- 避免频繁重绘影响性能
+- 合理设置更新频率平衡实时性和性能
+- 在网络延迟时提供友好的加载提示
+</Warning>

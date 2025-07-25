@@ -1,0 +1,621 @@
+---
+title: "界面操作和交互功能"
+description: "历史统计模块的界面操作和交互功能详细说明"
+---
+
+## 界面总览
+
+历史统计模块采用紧凑的垂直布局设计，集成了统计控制、图表显示、数据表格和设置配置等功能。界面支持拖拽移动、动态调整和多语言显示，提供专业的交易分析体验。
+
+## 主面板结构
+
+### 面板尺寸和布局
+
+<CardGroup cols={2}>
+  <Card title="基本尺寸" icon="ruler">
+    **宽度**: 动态计算，基于列宽总和
+    
+    **高度**: 分区域计算总高度
+    
+    **标题栏**: 30px固定高度
+    
+    **间距**: 5px标准间距
+  </Card>
+  
+  <Card title="布局结构" icon="layout">
+    **标题栏**: 模块名称和账户信息
+    
+    **维度控制区**: 统计维度选择按钮
+    
+    **时间控制区**: 日期选择和重置按钮
+    
+    **图表显示区**: 双图表并排显示
+    
+    **统计表格区**: 分页数据表格
+    
+    **分页控制区**: 导航和页面跳转
+  </Card>
+</CardGroup>
+
+### 标题栏区域
+
+#### 标题显示
+
+<Accordion title="多语言标题">
+**中文**: "TraderCopilot - 历史交易统计"
+
+**英文**: "TraderCopilot - History Deals Stats"
+
+**字体**: 根据语言自动选择合适字体
+
+**位置**: 左对齐，垂直居中
+
+**附加信息**: 显示账户号和服务器名称
+</Accordion>
+
+#### 控制按钮
+
+<CardGroup cols={2}>
+  <Card title="关闭按钮" icon="x">
+    **位置**: 标题栏右侧
+    
+    **功能**: 关闭历史统计面板
+    
+    **样式**: 20×20像素X图标
+    
+    **交互**: 点击立即关闭面板
+  </Card>
+  
+  <Card title="设置按钮" icon="gear">
+    **位置**: 关闭按钮左侧
+    
+    **功能**: 打开/关闭设置面板
+    
+    **状态**: 支持开关状态显示
+    
+    **交互**: 切换设置面板显示状态
+  </Card>
+</CardGroup>
+
+## 维度控制区
+
+### 统计维度按钮
+
+维度按钮水平排列，提供6种统计方式：
+
+```
+[日] [周] [月] [年] [货币对] [魔号]
+```
+
+#### 按钮状态
+
+<CardGroup cols={2}>
+  <Card title="选中状态" icon="check-circle">
+    **颜色**: 高亮显示（蓝色背景）
+    
+    **效果**: 按钮背景色变化
+    
+    **功能**: 表示当前活跃的统计维度
+    
+    **响应**: 立即重新计算统计数据
+  </Card>
+  
+  <Card title="默认状态" icon="circle">
+    **颜色**: 默认灰色背景
+    
+    **效果**: 可点击状态
+    
+    **功能**: 可切换的统计维度选项
+    
+    **响应**: 鼠标悬停时高亮显示
+  </Card>
+</CardGroup>
+
+#### 维度切换代码实现
+
+```cpp
+// 维度按钮点击事件处理
+if(StringFind(sparam, m_Prefix+"DIMENSION_") >= 0) {
+    if(sparam == m_Prefix+"DIMENSION_DAY") {
+        m_dimension = STATS_DAY;
+    } else if(sparam == m_Prefix+"DIMENSION_WEEK") {
+        m_dimension = STATS_WEEK;
+    } else if(sparam == m_Prefix+"DIMENSION_MONTH") {
+        m_dimension = STATS_MONTH;
+    }
+    // ... 其他维度处理
+    
+    // 重新计算统计数据
+    CalculateStats();
+    Update();
+}
+```
+
+## 时间控制区
+
+### 日期选择器
+
+<CardGroup cols={2}>
+  <Card title="起始日期" icon="calendar-plus">
+    **控件**: DatePicker组件
+    
+    **功能**: 选择统计开始日期
+    
+    **默认**: 30天前
+    
+    **格式**: YYYY-MM-DD
+    
+    **验证**: 不能晚于结束日期
+  </Card>
+  
+  <Card title="结束日期" icon="calendar-minus">
+    **控件**: DatePicker组件
+    
+    **功能**: 选择统计结束日期
+    
+    **默认**: 当前日期
+    
+    **格式**: YYYY-MM-DD
+    
+    **验证**: 不能早于开始日期
+  </Card>
+</CardGroup>
+
+### 时间控制按钮
+
+<CardGroup cols={2}>
+  <Card title="重置按钮" icon="refresh">
+    **功能**: 重置时间范围到默认值
+    
+    **默认范围**: 最近30天
+    
+    **操作**: 点击立即重置并更新统计
+    
+    **用途**: 快速恢复到常用时间范围
+  </Card>
+  
+  <Card title="成交明细按钮" icon="list">
+    **功能**: 显示详细的成交记录
+    
+    **内容**: 每笔交易的详细信息
+    
+    **格式**: 分页表格显示
+    
+    **用途**: 查看具体的交易明细
+  </Card>
+</CardGroup>
+
+#### 日期选择器交互
+
+<Steps>
+  <Step title="点击日期输入框">
+    点击起始或结束日期输入框
+  </Step>
+  <Step title="打开日期选择器">
+    弹出日历选择界面
+  </Step>
+  <Step title="选择日期">
+    在日历中点击选择日期
+  </Step>
+  <Step title="确认选择">
+    点击确定按钮应用新日期
+  </Step>
+  <Step title="自动更新">
+    系统自动重新计算统计数据
+  </Step>
+</Steps>
+
+## 图表显示区
+
+### 双图表布局
+
+<CardGroup cols={2}>
+  <Card title="左侧图表" icon="chart-line">
+    **默认内容**: 净利润图
+    
+    **尺寸**: (面板宽度-间距)/2
+    
+    **高度**: 150px固定高度
+    
+    **功能**: 显示累计利润变化趋势
+  </Card>
+  
+  <Card title="右侧图表" icon="chart-area">
+    **默认内容**: 余额图
+    
+    **尺寸**: (面板宽度-间距)/2
+    
+    **高度**: 150px固定高度
+    
+    **功能**: 显示账户余额变化
+  </Card>
+</CardGroup>
+
+### 图表切换模式
+
+根据统计维度的不同，图表会自动切换显示内容：
+
+#### 时间维度图表
+
+<Accordion title="净利润图 + 余额图">
+**适用维度**: 日、周、月、年统计
+
+**左图**: 净利润时间序列图
+- 显示累计利润变化
+- 绿色上涨，红色下跌
+- 包含趋势线和关键点标注
+
+**右图**: 余额变化图
+- 显示账户余额历史
+- 蓝色上涨，红色下跌
+- 包含出入金影响
+</Accordion>
+
+#### 分组维度图表
+
+<Accordion title="散点图 + 多空比例图">
+**适用维度**: 货币对、魔术号统计
+
+**左图**: 利润分布散点图
+- X轴：持仓时间
+- Y轴：交易利润
+- 绿色盈利点，红色亏损点
+
+**右图**: 多空比例图
+- 显示多头/空头交易分布
+- 绿色多头，红色空头
+- 支持饼图或柱状图模式
+</Accordion>
+
+## 统计表格区
+
+### 表格结构
+
+<CardGroup cols={2}>
+  <Card title="表头设计" icon="table">
+    **列数**: 14列固定列数
+    
+    **列宽**: 根据内容动态调整
+    
+    **排序**: 支持点击列头排序
+    
+    **切换**: 部分列支持内容切换
+  </Card>
+  
+  <Card title="数据行" icon="list">
+    **行高**: 固定行高便于对齐
+    
+    **交替色**: 奇偶行不同背景色
+    
+    **选择**: 支持行选择高亮
+    
+    **分页**: 支持大量数据分页显示
+  </Card>
+</CardGroup>
+
+### 列标题和内容
+
+| 列序号 | 列标题 | 切换内容 | 说明 |
+|--------|--------|----------|------|
+| 1 | # | 固定 | 序号 |
+| 2 | 日期范围 | 固定 | 统计时间段 |
+| 3 | 数量 | 固定 | 订单数量 |
+| 4 | 手数 | 总手数→最大→最小 | 交易量统计 |
+| 5 | 费用 | 隔夜费↔手续费 | 成本分析 |
+| 6 | 利润 | 利润金额↔利润% | 收益分析 |
+| 7 | 出入金 | 固定 | 资金流动 |
+| 8 | 余额 | 固定 | 账户余额 |
+| 9 | 回撤 | 回撤金额↔回撤% | 风险分析 |
+| 10 | 浮盈 | 浮盈金额↔浮盈% | 未实现收益 |
+| 11 | 毛利 | 毛利润↔毛亏损 | 盈亏分析 |
+| 12 | 胜率% | 固定 | 成功率 |
+| 13 | 盈亏比 | 固定 | 风险收益比 |
+| 14 | 持仓时间 | 最大时间↔平均时间 | 时间效率 |
+
+### 列内容切换
+
+#### 切换操作
+
+<Steps>
+  <Step title="定位可切换列">
+    找到支持内容切换的列标题
+  </Step>
+  <Step title="点击列标题">
+    点击列标题或列标题右侧的切换按钮
+  </Step>
+  <Step title="内容切换">
+    列内容自动切换到下一个显示模式
+  </Step>
+  <Step title="数据更新">
+    表格数据立即更新显示新内容
+  </Step>
+</Steps>
+
+#### 切换状态指示
+
+```cpp
+// 列切换状态管理
+int m_STATS_BUT[20];  // 列切换状态数组
+
+// 手数列切换逻辑
+if(m_STATS_BUT[3] == 0) m_menu[3] = "手数";    // 总手数
+if(m_STATS_BUT[3] == 1) m_menu[3] = "最大";    // 最大手数  
+if(m_STATS_BUT[3] == 2) m_menu[3] = "最小";    // 最小手数
+```
+
+## 分页控制区
+
+### 分页导航
+
+<CardGroup cols={4}>
+  <Card title="上一页" icon="arrow-left">
+    **按钮**: "上一页"/"Back"
+    
+    **功能**: 跳转到上一页
+    
+    **状态**: 第一页时禁用
+    
+    **宽度**: 90px固定宽度
+  </Card>
+  
+  <Card title="页码显示" icon="list-ol">
+    **格式**: "当前页 / 总页数"
+    
+    **示例**: "3 / 15"
+    
+    **功能**: 显示分页状态
+    
+    **宽度**: 90px固定宽度
+  </Card>
+  
+  <Card title="页码输入" icon="edit">
+    **控件**: 输入框
+    
+    **功能**: 直接输入页码跳转
+    
+    **验证**: 自动验证页码范围
+    
+    **宽度**: 40px固定宽度
+  </Card>
+  
+  <Card title="下一页" icon="arrow-right">
+    **按钮**: "下一页"/"Next"
+    
+    **功能**: 跳转到下一页
+    
+    **状态**: 最后一页时禁用
+    
+    **宽度**: 90px固定宽度
+  </Card>
+</CardGroup>
+
+### 分页计算
+
+#### 分页参数
+
+```cpp
+int m_rows;           // 每页显示行数
+int m_curr_page;      // 当前页码
+int m_total_pages;    // 总页数
+
+// 总页数计算
+m_total_pages = (int)MathCeil((double)ArraySize(m_sts) / m_rows);
+```
+
+#### 分页导航代码
+
+```cpp
+// 上一页
+if(sparam == m_Prefix+"PREV") {
+    if(m_curr_page > 1) {
+        m_curr_page--;
+        Update();
+    }
+}
+
+// 下一页
+if(sparam == m_Prefix+"NEXT") {
+    if(m_curr_page < m_total_pages) {
+        m_curr_page++;
+        Update();
+    }
+}
+
+// 页码跳转
+if(sparam == m_Prefix+"PAGE_GO") {
+    string input = ObjectGetString(0, m_Prefix+"PAGE_INPUT", OBJPROP_TEXT);
+    int page = (int)StringToInteger(input);
+    if(page >= 1 && page <= m_total_pages) {
+        m_curr_page = page;
+        Update();
+    }
+}
+```
+
+## 设置面板
+
+### 面板展开
+
+当点击设置按钮时，设置面板会在主面板旁边展开：
+
+#### 面板特性
+- **位置**: 主面板右侧或下方
+- **大小**: 610×400像素（2列布局）
+- **拖拽**: 支持独立拖拽移动
+- **关闭**: 点击关闭按钮或主面板设置按钮
+
+#### 设置面板布局
+
+<CardGroup cols={2}>
+  <Card title="左侧区域" icon="sliders-h">
+    **筛选方法**: 单选按钮组
+    
+    **魔术号列表**: ListView控件
+    
+    **货币对列表**: ListView控件
+    
+    **宽度**: 305px
+  </Card>
+  
+  <Card title="右侧区域" icon="paint-brush">
+    **字体设置**: ComboBox下拉框
+    
+    **字体大小**: SpinEdit数值输入
+    
+    **显示行数**: SpinEdit数值输入
+    
+    **颜色配置**: ColorPicker颜色选择器
+    
+    **宽度**: 305px
+  </Card>
+</CardGroup>
+
+### 筛选方法配置
+
+#### 单选按钮组
+
+<Accordion title="筛选方法选项">
+**默认**: 统计所有交易数据
+
+**仅统计选定元素**: 只统计选中的魔术号/货币对
+
+**不统计选定元素**: 排除选中的魔术号/货币对
+
+**控件**: CCheckBox单选组
+
+**响应**: 选择后立即应用到统计
+</Accordion>
+
+### 元素列表管理
+
+#### ListView控件操作
+
+<Steps>
+  <Step title="添加元素">
+    点击列表下方的"添加"按钮
+  </Step>
+  <Step title="输入内容">
+    在弹出的输入框中输入魔术号或货币对
+  </Step>
+  <Step title="验证格式">
+    系统自动验证输入格式的正确性
+  </Step>
+  <Step title="添加到列表">
+    验证通过后添加到筛选列表
+  </Step>
+  <Step title="应用筛选">
+    立即应用新的筛选条件
+  </Step>
+</Steps>
+
+### 样式设置
+
+#### 字体配置
+
+<CardGroup cols={2}>
+  <Card title="字体选择" icon="font">
+    **控件**: ComboBox下拉框
+    
+    **选项**: 系统可用字体列表
+    
+    **默认**: 
+    - 中文：Microsoft YaHei
+    - 英文：Arial
+    
+    **应用**: 立即更新界面字体
+  </Card>
+  
+  <Card title="字体大小" icon="text-height">
+    **控件**: SpinEdit数值输入
+    
+    **范围**: 8-20像素
+    
+    **默认**: 根据DPI自动计算
+    
+    **应用**: 立即更新字体大小
+  </Card>
+</CardGroup>
+
+#### 颜色配置
+
+系统提供7个颜色配置选项：
+
+| 配置项 | 默认颜色 | 说明 |
+|--------|----------|------|
+| **盈利颜色** | 绿色 | 盈利数据显示颜色 |
+| **亏损颜色** | 红色 | 亏损数据显示颜色 |
+| **无效数据** | 灰色 | 零值或无效数据颜色 |
+| **利润图上涨** | 绿色 | 利润图上涨线条颜色 |
+| **利润图下跌** | 红色 | 利润图下跌线条颜色 |
+| **余额图上涨** | 蓝色 | 余额图上涨区域颜色 |
+| **余额图下跌** | 红色 | 余额图下跌区域颜色 |
+
+## 拖拽功能
+
+### 拖拽机制
+
+主面板和设置面板都支持独立拖拽：
+
+#### 拖拽区域
+- **主面板**: 标题栏区域
+- **设置面板**: 设置面板标题栏
+
+#### 拖拽特性
+- **自由移动**: 可在图表区域内自由移动
+- **边界限制**: 防止拖拽到屏幕外
+- **位置记忆**: 记住面板位置
+- **独立拖拽**: 两个面板可以独立移动
+
+### 拖拽代码实现
+
+```cpp
+void CPageList::SetDragObjects(CDrag* &dg, string main_obj, string &grops[], const string fix) {
+    dg.MemoryGroups();
+    dg.SetDragMode(main_obj, DRAG_MODE_FREE);
+    
+    // 收集所有相关对象
+    int total = ObjectsTotal(0);
+    for(int i = 0; i < total; i++) {
+        string name = ObjectName(0, i);
+        if(StringFind(name, fix) >= 0 && name != main_obj) {
+            ArrayResize(grops, ArraySize(grops) + 1);
+            grops[ArraySize(grops) - 1] = name;
+        }
+    }
+    
+    // 创建拖拽组
+    if(ArraySize(grops) > 0) {
+        string GroupName = "PAGELIST_" + TimeToString(GetTickCount());
+        dg.CreateObjectGroup(GroupName, grops, main_obj);
+    }
+}
+```
+
+## 响应式设计
+
+### 字体自适应
+
+<CardGroup cols={2}>
+  <Card title="DPI适配" icon="monitor">
+    **功能**: 根据屏幕DPI自动调整字体大小
+    
+    **公式**: `AutoFont() = (dpi > 96) ? (fontsize * dpi / 96) : fontsize`
+    
+    **效果**: 确保在不同分辨率下清晰显示
+  </Card>
+  
+  <Card title="多语言字体" icon="language">
+    **中文**: Microsoft YaHei字体
+    
+    **英文**: Arial字体
+    
+    **自动**: 根据界面语言自动选择
+  </Card>
+</CardGroup>
+
+### 布局自适应
+
+- **动态计算**: 根据内容动态计算面板大小
+- **最小尺寸**: 确保所有元素可见
+- **比例调整**: 保持界面元素的合理比例
+- **分辨率适配**: 适应不同屏幕分辨率

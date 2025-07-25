@@ -1,0 +1,482 @@
+---
+title: "新闻筛选功能"
+description: "新闻筛选、时区管理和浏览功能的详细使用指南"
+---
+
+## 功能概述
+
+新闻筛选功能提供多维度的新闻过滤和浏览能力，帮助用户从海量新闻中快速找到最相关的内容。系统支持按重要性、货币对、时间等条件进行精确筛选，并提供灵活的时区管理和分页浏览功能。
+
+## 重要性筛选
+
+### 重要性等级
+
+新闻按照对市场的潜在影响分为三个等级：
+
+<CardGroup cols={3}>
+  <Card title="高重要性" icon="exclamation-triangle">
+    **标识**: 🔴 红色标记
+    
+    **内容**: 央行决议、非农数据、GDP等
+    
+    **影响**: 可能引起市场剧烈波动
+    
+    **建议**: 重点关注，谨慎交易
+  </Card>
+  
+  <Card title="中重要性" icon="exclamation">
+    **标识**: 🟡 黄色标记
+    
+    **内容**: CPI、PPI、零售销售等
+    
+    **影响**: 对市场有一定影响
+    
+    **建议**: 适度关注，评估影响
+  </Card>
+  
+  <Card title="低重要性" icon="info">
+    **标识**: 🟢 绿色标记
+    
+    **内容**: 一般经济数据、市场评论
+    
+    **影响**: 对市场影响较小
+    
+    **建议**: 了解即可，影响有限
+  </Card>
+</CardGroup>
+
+### 筛选控制
+
+#### 筛选状态管理
+
+系统使用状态数组管理重要性筛选：
+
+```cpp
+bool m_view_state[3];  // 查看状态数组
+// [0] = 高重要性
+// [1] = 中重要性  
+// [2] = 低重要性
+```
+
+#### 默认设置
+
+```cpp
+ArrayInitialize(m_view_state, true);  // 默认显示所有等级
+```
+
+#### 筛选操作
+
+<Steps>
+  <Step title="找到重要性控制">
+    在新闻面板中找到重要性筛选复选框
+  </Step>
+  <Step title="选择等级">
+    勾选或取消勾选相应的重要性等级
+  </Step>
+  <Step title="应用筛选">
+    系统会自动更新新闻列表显示
+  </Step>
+  <Step title="查看结果">
+    只显示选中重要性等级的新闻
+  </Step>
+</Steps>
+
+## 货币对筛选
+
+### 支持的货币
+
+系统支持主要货币的筛选：
+
+#### 主要货币列表
+
+<CardGroup cols={4}>
+  <Card title="USD" icon="dollar-sign">
+    **全称**: 美元
+    
+    **地位**: 全球储备货币
+    
+    **特点**: 流动性最高
+  </Card>
+  
+  <Card title="EUR" icon="euro-sign">
+    **全称**: 欧元
+    
+    **地位**: 第二大储备货币
+    
+    **特点**: 欧洲统一货币
+  </Card>
+  
+  <Card title="GBP" icon="pound-sign">
+    **全称**: 英镑
+    
+    **地位**: 传统强势货币
+    
+    **特点**: 波动性较大
+  </Card>
+  
+  <Card title="JPY" icon="yen-sign">
+    **全称**: 日元
+    
+    **地位**: 避险货币
+    
+    **特点**: 低利率货币
+  </Card>
+</CardGroup>
+
+#### 其他重要货币
+
+| 货币代码 | 货币名称 | 特点 |
+|----------|----------|------|
+| **CHF** | 瑞士法郎 | 传统避险货币 |
+| **CAD** | 加拿大元 | 商品货币 |
+| **AUD** | 澳大利亚元 | 商品货币，高利率 |
+| **NZD** | 新西兰元 | 商品货币，高波动 |
+
+### 筛选配置
+
+#### 货币对列表设置
+
+<Accordion title="自定义货币对列表">
+**功能**: 设置要监控的特定货币对
+
+**格式**: 使用逗号分隔的货币对列表
+
+**示例**: "EURUSD,GBPUSD,USDJPY,AUDUSD"
+
+**设置位置**: 设置面板的"货币对列表"输入框
+
+**代码实现**:
+```cpp
+if(sparam == m_setprefix + "symbol_list") {
+    m_symbol_list = ObjectGetString(0, sparam, OBJPROP_TEXT);
+}
+```
+</Accordion>
+
+#### 筛选逻辑
+
+系统会根据新闻内容自动匹配相关货币对：
+
+1. **关键词匹配**: 在新闻标题和内容中搜索货币代码
+2. **国家匹配**: 根据新闻涉及的国家匹配相应货币
+3. **事件匹配**: 根据经济事件类型匹配影响的货币对
+
+## 时区管理
+
+### 支持的时区
+
+<CardGroup cols={2}>
+  <Card title="主要时区" icon="globe">
+    **GMT**: 格林威治标准时间
+    
+    **EST/EDT**: 美国东部时间
+    
+    **CET/CEST**: 欧洲中部时间
+    
+    **JST**: 日本标准时间
+  </Card>
+  
+  <Card title="其他时区" icon="clock">
+    **CST**: 中国标准时间
+    
+    **PST/PDT**: 美国太平洋时间
+    
+    **AEST**: 澳大利亚东部时间
+    
+    **MSK**: 莫斯科时间
+  </Card>
+</CardGroup>
+
+### 时区设置
+
+#### 时区选择器
+
+<Steps>
+  <Step title="打开时区选择">
+    在新闻面板中找到时区下拉框
+  </Step>
+  <Step title="选择时区">
+    从下拉列表中选择所需的时区
+  </Step>
+  <Step title="应用设置">
+    系统会自动转换所有新闻时间
+  </Step>
+  <Step title="验证显示">
+    确认新闻时间显示为选定时区
+  </Step>
+</Steps>
+
+#### 时区数据结构
+
+```cpp
+NewsTimeZone m_time_zone;    // 时区数据
+int m_Offset;                // 时差
+int m_zone_index;            // 选定时区索引
+```
+
+### 时间类型
+
+#### 三种时间基准
+
+<Accordion title="GMT时间">
+**定义**: 格林威治标准时间
+
+**优势**: 国际标准，便于全球统一
+
+**适用**: 国际化交易，多时区协作
+
+**显示**: 所有时间以GMT为基准显示
+</Accordion>
+
+<Accordion title="服务器时间">
+**定义**: MT5服务器的时间
+
+**优势**: 与交易时间完全同步
+
+**适用**: 需要与交易时间精确对应
+
+**显示**: 与MT5平台时间一致
+</Accordion>
+
+<Accordion title="本地时间">
+**定义**: 电脑系统的本地时间
+
+**优势**: 符合用户本地习惯
+
+**适用**: 本地化使用，便于理解
+
+**显示**: 按本地时区显示时间
+</Accordion>
+
+#### 时间类型枚举
+
+```cpp
+enum ENUM_BRT_TYPE {
+    GMT_TIME,      // GMT时间
+    SERVER_TIME,   // 服务器时间  
+    LOCAL_TIME     // 本地时间
+};
+```
+
+## 日期筛选
+
+### 日期选择器
+
+<CardGroup cols={2}>
+  <Card title="功能特性" icon="calendar">
+    **选择方式**: 点击日期选择器控件
+    
+    **显示格式**: YYYY-MM-DD
+    
+    **默认值**: 当前日期
+    
+    **范围**: 支持历史和未来日期
+  </Card>
+  
+  <Card title="操作方法" icon="mouse-pointer">
+    **打开**: 点击日期输入框
+    
+    **选择**: 在日历中点击日期
+    
+    **确认**: 点击确定按钮
+    
+    **取消**: 点击取消或空白区域
+  </Card>
+</CardGroup>
+
+### 日期筛选逻辑
+
+#### 筛选范围
+
+- **当日新闻**: 显示选定日期的所有新闻
+- **时间范围**: 从选定日期00:00到23:59
+- **时区影响**: 根据选定时区调整日期范围
+
+#### 代码实现
+
+```cpp
+datetime m_selected_dates;   // 日期选择器选定的日期
+bool m_dateopen;            // 日期选择器状态
+
+// 日期筛选逻辑
+void TodayNews() {
+    // 根据选定日期筛选新闻
+    // 考虑时区偏移
+    // 更新新闻列表显示
+}
+```
+
+## 分页浏览
+
+### 分页机制
+
+#### 分页参数
+
+<CardGroup cols={2}>
+  <Card title="基本参数" icon="list">
+    **每页行数**: m_show_rows
+    
+    **当前页**: m_curr_page
+    
+    **总页数**: m_pages
+    
+    **总新闻数**: ArraySize(m_news)
+  </Card>
+  
+  <Card title="计算公式" icon="calculator">
+    **总页数**: 
+    ```
+    m_pages = (总新闻数 + 每页行数 - 1) / 每页行数
+    ```
+    
+    **当前页范围**:
+    ```
+    起始索引 = (当前页 - 1) × 每页行数
+    结束索引 = 起始索引 + 每页行数 - 1
+    ```
+  </Card>
+</CardGroup>
+
+### 导航控制
+
+#### 导航按钮
+
+<Steps>
+  <Step title="上一页">
+    点击"PREV"按钮跳转到上一页
+    
+    条件：当前页 > 1
+  </Step>
+  <Step title="下一页">
+    点击"NEXT"按钮跳转到下一页
+    
+    条件：当前页 < 总页数
+  </Step>
+  <Step title="跳转页面">
+    在页码输入框中输入页码，点击"GO"
+    
+    范围：1 到 总页数
+  </Step>
+  <Step title="页面显示">
+    显示格式："当前页 / 总页数"
+    
+    示例："3 / 15"
+  </Step>
+</Steps>
+
+#### 导航代码实现
+
+```cpp
+// 上一页
+if(sparam == m_prefix + "PREV") {
+    if(m_curr_page > 1) {
+        m_curr_page--;
+        DrawNewsPanel();
+    }
+}
+
+// 下一页  
+if(sparam == m_prefix + "NEXT") {
+    if(m_curr_page < m_pages) {
+        m_curr_page++;
+        DrawNewsPanel();
+    }
+}
+
+// 跳转页面
+if(sparam == m_prefix + "PAGE_GO") {
+    string inp = ObjectGetString(0, m_prefix + "PAGE_INPUT", OBJPROP_TEXT);
+    int page = (int)StringToInteger(inp);
+    if(page > m_pages) page = m_pages;
+    if(page < 1) page = 1;
+    if(page != m_curr_page) {
+        m_curr_page = page;
+        DrawNewsPanel();
+    }
+}
+```
+
+## 筛选组合使用
+
+### 多条件筛选
+
+用户可以同时使用多个筛选条件：
+
+#### 筛选优先级
+
+1. **新闻源筛选**: 首先确定数据来源
+2. **日期筛选**: 限定时间范围
+3. **重要性筛选**: 过滤重要性等级
+4. **货币对筛选**: 匹配相关货币对
+
+#### 筛选流程
+
+<Steps>
+  <Step title="获取原始数据">
+    从选定新闻源获取指定日期的所有新闻
+  </Step>
+  <Step title="应用重要性筛选">
+    根据重要性等级选择过滤新闻
+  </Step>
+  <Step title="应用货币对筛选">
+    根据货币对列表匹配相关新闻
+  </Step>
+  <Step title="计算分页">
+    根据筛选结果计算分页参数
+  </Step>
+  <Step title="显示结果">
+    在当前页显示筛选后的新闻
+  </Step>
+</Steps>
+
+### 筛选优化建议
+
+<Tip>
+**筛选技巧**:
+- 先选择关注的货币对，减少无关新闻
+- 根据交易策略选择合适的重要性等级
+- 使用日期筛选查看历史重要事件
+- 结合时区设置确保时间准确性
+</Tip>
+
+<Warning>
+**注意事项**:
+- 过度筛选可能遗漏重要信息
+- 时区设置错误会影响新闻时间显示
+- 货币对筛选可能不够精确
+- 网络问题可能影响筛选结果
+</Warning>
+
+## 常见问题
+
+<AccordionGroup>
+  <Accordion title="为什么筛选后没有新闻显示？">
+    可能原因：
+    - 筛选条件过于严格
+    - 选定日期没有相关新闻
+    - 网络获取数据失败
+    - 新闻源暂时无数据
+    
+    解决方法：
+    - 放宽筛选条件
+    - 选择其他日期
+    - 检查网络连接
+    - 尝试其他新闻源
+  </Accordion>
+  
+  <Accordion title="时间显示不正确怎么办？">
+    检查项目：
+    - 确认选择的时区是否正确
+    - 检查电脑系统时间设置
+    - 验证时间类型选择
+    - 确认夏令时设置
+  </Accordion>
+  
+  <Accordion title="如何快速找到特定货币对的新闻？">
+    操作方法：
+    - 在设置中配置货币对列表
+    - 只包含关注的货币对
+    - 选择高重要性等级
+    - 使用关键词搜索功能
+  </Accordion>
+</AccordionGroup>

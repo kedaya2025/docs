@@ -1,0 +1,339 @@
+---
+title: "常见问题解决"
+description: "交易助手使用过程中的常见问题和解决方案"
+---
+
+## 交易执行问题
+
+### 交易按钮无法点击
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    SELL/BUY按钮显示为灰色，无法点击执行交易
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 市场已关闭或在非交易时间
+    - 货币对停止交易
+    - 网络连接问题导致价格更新延迟
+    - MT5平台连接异常
+    - 账户权限限制
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **检查市场时间**: 确认当前是否在交易时间内
+    2. **验证网络连接**: 检查MT5平台连接状态
+    3. **刷新价格**: 切换到其他货币对再切换回来
+    4. **重启EA**: 关闭并重新启动TraderCopilot
+    5. **检查账户**: 确认账户有足够余额和交易权限
+  </Accordion>
+</AccordionGroup>
+
+### 交易执行失败
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    点击交易按钮后没有成功下单，或收到错误提示
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 账户余额不足
+    - 手数超出允许范围
+    - 止盈止损设置不合理
+    - 价格跳空导致滑点过大
+    - 经纪商拒绝交易
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **检查余额**: 确保账户有足够的保证金
+    2. **调整手数**: 将手数调整到允许范围内
+    3. **重新设置止盈止损**: 确保距离符合最小要求
+    4. **等待价格稳定**: 避免在价格剧烈波动时交易
+    5. **联系经纪商**: 如果问题持续，联系经纪商确认
+  </Accordion>
+</AccordionGroup>
+
+### 挂单价格计算错误
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    挂单价格与预期不符，或者挂单立即成交
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 距离设置过小，低于最小距离要求
+    - 价格快速变动导致计算基准变化
+    - 点差变化影响计算结果
+    - 挂单类型选择错误
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **增加距离**: 将"与市场价的距离"设置得更大
+    2. **检查最小距离**: 确认经纪商的最小距离要求
+    3. **验证挂单类型**: 确保选择了正确的挂单类型
+    4. **等待价格稳定**: 在价格相对稳定时设置挂单
+  </Accordion>
+</AccordionGroup>
+
+## 手数调整问题
+
+### 手数调整按钮无效
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    点击手数调整按钮（+/-）没有反应，手数不变化
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 已达到最大或最小手数限制
+    - 按钮响应区域问题
+    - 系统资源不足导致响应延迟
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **检查手数范围**: 确认当前手数是否已达到极限值
+    2. **精确点击**: 确保点击在按钮区域内
+    3. **直接输入**: 尝试直接在手数框中输入数值
+    4. **重新加载**: 关闭并重新打开交易助手面板
+  </Accordion>
+</AccordionGroup>
+
+### 手数显示异常
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    手数显示为异常值，如负数或过大的数值
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 输入了无效的手数值
+    - 系统计算错误
+    - 货币对信息获取异常
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **重置手数**: 手动输入合理的手数值（如0.01）
+    2. **切换货币对**: 切换到其他货币对再切换回来
+    3. **重启面板**: 关闭并重新打开交易助手
+    4. **检查货币对**: 确认选择的货币对有效
+  </Accordion>
+</AccordionGroup>
+
+## 网格交易问题
+
+### 网格配置无法保存
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    设置网格参数后，参数没有保存或恢复到默认值
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 参数超出有效范围
+    - 系统权限问题
+    - 配置文件损坏
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **检查参数范围**: 确保所有参数在有效范围内
+    2. **逐个设置**: 一次只修改一个参数并测试
+    3. **重启MT5**: 重启MetaTrader 5平台
+    4. **重新安装**: 如果问题持续，考虑重新安装EA
+  </Accordion>
+</AccordionGroup>
+
+### 网格订单执行异常
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    网格交易执行后，订单数量或价格与预期不符
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 网络延迟导致部分订单失败
+    - 保证金不足无法下全部订单
+    - 价格变动导致部分订单无效
+    - 经纪商限制同时下单数量
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **检查订单历史**: 查看哪些订单成功，哪些失败
+    2. **增加保证金**: 确保账户有足够资金
+    3. **减少订单数量**: 降低网格订单数量
+    4. **分批执行**: 手动分批执行网格订单
+  </Accordion>
+</AccordionGroup>
+
+## 持仓管理问题
+
+### 筛选条件无效
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    设置筛选条件后，没有找到符合条件的持仓
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 货币对名称不匹配
+    - 魔术号设置错误
+    - 当前没有符合条件的持仓
+    - 持仓信息更新延迟
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **验证货币对**: 确认货币对名称完全匹配
+    2. **检查魔术号**: 验证魔术号是否正确
+    3. **刷新信息**: 重新打开持仓管理面板
+    4. **手动检查**: 在MT5中手动检查持仓情况
+  </Accordion>
+</AccordionGroup>
+
+### 批量操作失败
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    执行批量平仓或删除挂单操作失败
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 网络连接不稳定
+    - 市场关闭无法交易
+    - 持仓状态发生变化
+    - 系统权限限制
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **检查网络**: 确保网络连接稳定
+    2. **验证市场状态**: 确认市场开放
+    3. **逐个操作**: 改为逐个手动操作
+    4. **重新尝试**: 等待一段时间后重新尝试
+  </Accordion>
+</AccordionGroup>
+
+## 界面显示问题
+
+### 价格显示异常
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    BID/ASK价格显示为0或异常数值
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 货币对数据源问题
+    - 网络连接中断
+    - MT5平台数据异常
+    - 货币对已停止交易
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **检查网络**: 确认MT5平台连接正常
+    2. **切换货币对**: 切换到其他货币对测试
+    3. **刷新数据**: 重新选择当前货币对
+    4. **重启平台**: 重启MetaTrader 5平台
+  </Accordion>
+</AccordionGroup>
+
+### 界面布局错乱
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    面板元素位置错乱，按钮重叠或显示不完整
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 屏幕分辨率变化
+    - DPI设置改变
+    - 系统字体设置变化
+    - 面板被拖拽到屏幕外
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **重置位置**: 关闭并重新打开面板
+    2. **调整DPI**: 检查系统DPI设置
+    3. **重启EA**: 完全重启TraderCopilot
+    4. **检查分辨率**: 确认屏幕分辨率设置正常
+  </Accordion>
+</AccordionGroup>
+
+## 性能问题
+
+### 响应速度慢
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    点击按钮后响应延迟，操作不够流畅
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 系统资源不足
+    - MT5平台负载过高
+    - 网络延迟
+    - 同时运行过多EA
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **关闭其他程序**: 释放系统资源
+    2. **减少EA数量**: 关闭不必要的EA
+    3. **检查网络**: 确保网络连接稳定
+    4. **重启MT5**: 重启MetaTrader 5平台
+  </Accordion>
+</AccordionGroup>
+
+### 内存使用过高
+
+<AccordionGroup>
+  <Accordion title="问题描述">
+    长时间使用后系统内存使用率过高
+  </Accordion>
+  
+  <Accordion title="可能原因">
+    - 内存泄漏问题
+    - 历史数据积累过多
+    - 图形渲染占用过多内存
+  </Accordion>
+  
+  <Accordion title="解决方案">
+    1. **定期重启**: 定期重启EA释放内存
+    2. **清理数据**: 清理不必要的历史数据
+    3. **监控使用**: 使用任务管理器监控内存使用
+    4. **升级硬件**: 考虑增加系统内存
+  </Accordion>
+</AccordionGroup>
+
+## 预防措施
+
+### 日常维护
+
+<Tip>
+**最佳实践**:
+- 定期重启EA（每日或每周）
+- 保持MT5平台更新到最新版本
+- 定期检查和清理交易历史
+- 监控系统资源使用情况
+- 备份重要的配置设置
+</Tip>
+
+### 风险防范
+
+<Warning>
+**重要提醒**:
+- 重要操作前先在模拟账户测试
+- 定期备份交易设置和参数
+- 保持对市场状态的关注
+- 设置合理的风险控制参数
+- 避免在网络不稳定时进行重要操作
+</Warning>
+
+## 获取帮助
+
+如果以上解决方案都无法解决问题，请：
+
+1. **记录问题**: 详细记录问题现象和操作步骤
+2. **收集信息**: 包括系统配置、MT5版本、账户类型等
+3. **联系支持**: 通过官方渠道联系技术支持
+4. **提供截图**: 如果可能，提供问题截图或视频
+
+<Info>
+技术支持联系方式：https://www.00123.com/
+</Info>
