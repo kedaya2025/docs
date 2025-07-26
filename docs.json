@@ -121,7 +121,6 @@
             "group": "篮子功能",
             "pages": [
               "modules/BasketTrade/index",
-              "modules/BasketTrade/interface",
               "modules/BasketTrade/currency-strength",
               "modules/BasketTrade/trend-analysis",
               "modules/BasketTrade/basket-trading",

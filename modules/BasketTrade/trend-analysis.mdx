@@ -69,25 +69,6 @@ description: "趋势评分系统和历史波幅查询功能详解"
   </Card>
 </CardGroup>
 
-#### 趋势评分计算
-
-```cpp
-class CTrendScore {
-private:
-    double CalculateTrendScore(string symbol, ENUM_TIMEFRAMES period) {
-        double ma_score = CalculateMAScore(symbol, period);
-        double momentum_score = CalculateMomentumScore(symbol, period);
-        double trend_score = CalculateTrendIndicatorScore(symbol, period);
-        
-        // 加权平均计算最终评分
-        double final_score = (ma_score * 0.4) + 
-                           (momentum_score * 0.3) + 
-                           (trend_score * 0.3);
-        
-        return MathMax(0, MathMin(100, final_score));
-    }
-};
-```
 
 ## 趋势面板显示
 
@@ -115,148 +96,7 @@ private:
   </Card>
 </CardGroup>
 
-### 趋势面板数据结构
 
-#### PairsTrendRitio结构
-
-```cpp
-struct PairsTrendRitio {
-    string Pair;        // 货币对符号
-    double Trend;       // 趋势评分 (0-100)
-    double Open;        // 开盘价
-    double High;        // 最高价
-    double Low;         // 最低价
-    double Close;       // 收盘价
-    datetime Time;      // 数据时间
-};
-```
-
-#### 数据更新机制
-
-```cpp
-void CBasket::UpdateTrendData(void) {
-    int total = ArraySize(m_pairs);
-    ArrayResize(m_trend_data, total);
-    
-    for(int i = 0; i < total; i++) {
-        string symbol = m_pairs[i];
-        
-        m_trend_data[i].Pair = symbol;
-        m_trend_data[i].Trend = m_trend.GetTrendScore(symbol, PERIOD_H4);
-        m_trend_data[i].Open = iOpen(symbol, PERIOD_D1, 0);
-        m_trend_data[i].High = iHigh(symbol, PERIOD_D1, 0);
-        m_trend_data[i].Low = iLow(symbol, PERIOD_D1, 0);
-        m_trend_data[i].Close = iClose(symbol, PERIOD_D1, 0);
-        m_trend_data[i].Time = iTime(symbol, PERIOD_D1, 0);
-    }
-}
-```
-
-## 历史波幅查询
-
-### 查询功能
-
-<CardGroup cols={2}>
-  <Card title="自定义时间范围" icon="calendar">
-    **起始日期**: 用户可选择查询开始日期
-    
-    **结束日期**: 用户可选择查询结束日期
-    
-    **时间跨度**: 支持任意时间跨度查询
-    
-    **数据精度**: 按日统计波幅数据
-  </Card>
-  
-  <Card title="波幅计算" icon="chart-mixed">
-    **计算公式**: 每日高低价差的点数
-    ```
-    daily_range = (high - low) / point
-    ```
-    
-    **统计指标**: 最大、最小、平均波幅
-    
-    **分布分析**: 波幅分布直方图
-    
-    **趋势分析**: 波幅变化趋势
-  </Card>
-</CardGroup>
-
-### 历史查询界面
-
-#### 查询控件
-
-<CardGroup cols={3}>
-  <Card title="货币对选择" icon="coins">
-    **控件**: 下拉框选择
-    
-    **选项**: 所有可用货币对
-    
-    **默认**: 当前选中货币对
-    
-    **验证**: 自动验证货币对有效性
-  </Card>
-  
-  <Card title="日期选择" icon="calendar-alt">
-    **起始日期**: DatePicker日期选择器
-    
-    **结束日期**: DatePicker日期选择器
-    
-    **默认范围**: 最近30天
-    
-    **限制**: 结束日期不能早于起始日期
-  </Card>
-  
-  <Card title="查询按钮" icon="search">
-    **功能**: 执行历史波幅查询
-    
-    **验证**: 检查参数有效性
-    
-    **加载**: 显示查询进度
-    
-    **结果**: 更新图表和统计数据
-  </Card>
-</CardGroup>
-
-### 波幅数据结构
-
-#### ModRange结构
-
-```cpp
-struct ModRange {
-    datetime Date;      // 日期
-    double High;        // 最高价
-    double Low;         // 最低价
-    double Range;       // 波幅(点数)
-    double RangePct;    // 波幅百分比
-};
-```
-
-#### 查询实现
-
-```cpp
-void CBasket::QueryHistoricalRange(string symbol, datetime start_date, datetime end_date) {
-    ArrayFree(m_range_data);
-    
-    datetime current_date = start_date;
-    while(current_date <= end_date) {
-        int shift = iBarShift(symbol, PERIOD_D1, current_date);
-        if(shift >= 0) {
-            ModRange range;
-            range.Date = current_date;
-            range.High = iHigh(symbol, PERIOD_D1, shift);
-            range.Low = iLow(symbol, PERIOD_D1, shift);
-            
-            double point = SymbolInfoDouble(symbol, SYMBOL_POINT);
-            range.Range = (range.High - range.Low) / point;
-            range.RangePct = (range.High - range.Low) / range.Low * 100;
-            
-            ArrayResize(m_range_data, ArraySize(m_range_data) + 1);
-            m_range_data[ArraySize(m_range_data) - 1] = range;
-        }
-        current_date += 86400; // 下一天
-    }
-}
-```
 
 ## 图表可视化
 
@@ -284,28 +124,6 @@ void CBasket::QueryHistoricalRange(string symbol, datetime start_date, datetime 
   </Card>
 </CardGroup>
 
-### 图表实现
-
-```cpp
-void CBasket::DrawRangeChart(void) {
-    m_range_chart.Clear();
-    
-    int total = ArraySize(m_range_data);
-    for(int i = 0; i < total; i++) {
-        ModRange range = m_range_data[i];
-        
-        // 添加数据点到图表
-        m_range_chart.AddValue(range.Date, range.Range);
-    }
-    
-    // 设置图表属性
-    m_range_chart.SetColors(clrLimeGreen, clrRed, clrGray);
-    m_range_chart.SetTitle("Historical Range Analysis");
-    
-    // 绘制图表
-    m_range_chart.Draw();
-}
-```
 
 ## 价格信息显示
 

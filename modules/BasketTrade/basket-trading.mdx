@@ -107,38 +107,6 @@ description: "篮子交易策略和自动交易配置详解"
   </Card>
 </CardGroup>
 
-### 篮子数据结构
-
-#### CurrencyBasket结构
-
-```cpp
-struct CurrencyBasket {
-    string direct[];    // 直接货币对数组
-    string reverse[];   // 反向货币对数组
-};
-
-CurrencyBasket m_baskets[8];  // 8个货币篮子
-```
-
-#### 篮子初始化
-
-```cpp
-void CBasket::InitializeBaskets(void) {
-    // EUR篮子
-    string EUR[7] = {"EURAUD","EURCAD","EURCHF","EURGBP",
-                     "EURJPY","EURNZD","EURUSD"};
-    ArrayCopy(m_baskets[0].direct, EUR);
-    
-    // GBP篮子
-    string GBP[6] = {"GBPAUD","GBPCAD","GBPCHF",
-                     "GBPJPY","GBPNZD","GBPUSD"};
-    string GBP_R[1] = {"EURGBP"};
-    ArrayCopy(m_baskets[1].direct, GBP);
-    ArrayCopy(m_baskets[1].reverse, GBP_R);
-    
-    // ... 其他篮子初始化
-}
-```
 
 ## 手动篮子交易
 
@@ -182,51 +150,6 @@ void CBasket::InitializeBaskets(void) {
   </Card>
 </CardGroup>
 
-### 篮子交易代码实现
-
-#### 买入篮子
-
-```cpp
-void CBasket::BuyBasket(string &pairs[], int magic, string comment) {
-    for(int i = 0; i < ArraySize(pairs); i++) {
-        string symbol = pairs[i];
-        double ask = SymbolInfoDouble(symbol, SYMBOL_ASK);
-        double points = SymbolInfoDouble(symbol, SYMBOL_POINT);
-        int digits = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);
-        int level = (int)SymbolInfoInteger(symbol, SYMBOL_TRADE_STOPS_LEVEL);
-        
-        double sl = (m_bk_sl > 0) ? 
-            NormalizeDouble(ask - fmax(level, m_bk_sl) * points, digits) : 0;
-        double tp = (m_bk_tp > 0) ? 
-            NormalizeDouble(ask + fmax(level, m_bk_tp) * points, digits) : 0;
-            
-        m_td.PositionOpen(symbol, ORDER_TYPE_BUY, m_bk_valume, 
-                         sl, tp, INT_MAX, magic, comment);
-    }
-}
-```
-
-#### 卖出篮子
-
-```cpp
-void CBasket::SellBasket(string &pairs[], int magic, string comment) {
-    for(int i = 0; i < ArraySize(pairs); i++) {
-        string symbol = pairs[i];
-        double bid = SymbolInfoDouble(symbol, SYMBOL_BID);
-        double points = SymbolInfoDouble(symbol, SYMBOL_POINT);
-        int digits = (int)SymbolInfoInteger(symbol, SYMBOL_DIGITS);
-        int level = (int)SymbolInfoInteger(symbol, SYMBOL_TRADE_STOPS_LEVEL);
-        
-        double sl = (m_bk_sl > 0) ? 
-            NormalizeDouble(bid + fmax(level, m_bk_sl) * points, digits) : 0;
-        double tp = (m_bk_tp > 0) ? 
-            NormalizeDouble(bid - fmax(level, m_bk_tp) * points, digits) : 0;
-            
-        m_td.PositionOpen(symbol, ORDER_TYPE_SELL, m_bk_valume, 
-                         sl, tp, INT_MAX, magic, comment);
-    }
-}
-```
 
 ## 自动交易策略
 
@@ -258,46 +181,6 @@ void CBasket::SellBasket(string &pairs[], int magic, string comment) {
   </Card>
 </CardGroup>
 
-#### 强度交易实现
-
-```cpp
-void CBasket::OnTimer(void) {
-    if(m_use_stg_up || m_use_stg_down) {
-        int total = ArraySize(m_ratio);
-        for(int i = 0; i < total; i++) {
-            StrengthRatio ratio = m_ratio[i];
-            string pair = ratio.Pair;
-            datetime time = iTime(NULL, PERIOD_H4, 0);
-            int magics = 9200 + i;
-            string comment = "Auto Basket-" + pair;
-            
-            if(m_curr_itime[i] != time) {
-                // 上阈值策略
-                if(m_use_stg_up && ratio.Ratio >= m_strengthindex_up) {
-                    string d[], r[];
-                    m_strength.CheckPair(d, m_baskets[i].direct);
-                    m_strength.CheckPair(r, m_baskets[i].reverse);
-                    
-                    switch(m_up_stg_idx) {
-                        case 0:  // 买入策略
-                            BuyBasket(d, magics, comment + "-BUY");
-                            SellBasket(r, magics, comment + "-BUY");
-                            break;
-                        case 1:  // 卖出策略
-                            SellBasket(d, magics, comment + "-SELL");
-                            BuyBasket(r, magics, comment + "-SELL");
-                            break;
-                    }
-                    m_curr_itime[i] = time;
-                }
-                
-                // 下阈值策略 (类似逻辑)
-                // ...
-            }
-        }
-    }
-}
-```
 
 ### 波动率交易策略
 
@@ -333,43 +216,6 @@ void CBasket::OnTimer(void) {
   </Card>
 </CardGroup>
 
-#### 波动率交易实现
-
-```cpp
-if(m_use_vc_up || m_use_vc_down) {
-    for(int i = 0; i < ArraySize(m_pairs); i++) {
-        string symbol = m_pairs[i];
-        double close = iClose(symbol, PERIOD_D1, 0);
-        double open = iOpen(symbol, PERIOD_D1, 0);
-        double point = SymbolInfoDouble(symbol, SYMBOL_POINT);
-        int change = (point != 0) ? (int)((close - open) / point) : 0;
-        
-        if(change == 0) continue;
-        
-        datetime time = iTime(NULL, PERIOD_H4, 0);
-        int magic = 9300 + i;
-        string comment = "Auto-" + symbol;
-        
-        if(m_sym_itime[i] != time) {
-            // 上涨策略
-            if(m_use_vc_up && change >= fabs(m_vc_value)) {
-                switch(m_up_vc_idx) {
-                    case 0:  // 顺势买入
-                        // 买入逻辑
-                        break;
-                    case 1:  // 逆势卖出
-                        // 卖出逻辑
-                        break;
-                }
-                m_sym_itime[i] = time;
-            }
-            
-            // 下跌策略 (类似逻辑)
-            // ...
-        }
-    }
-}
-```
 
 ## 交易参数配置
 
