@@ -101,13 +101,12 @@
         ]
       },
       {
-        "tab": "市场分析",
+        "tab": "市场动态",
         "groups": [
           {
             "group": "市场功能",
             "pages": [
               "modules/MarketWatch/index",
-              "modules/MarketWatch/interface",
               "modules/MarketWatch/sentiment-analysis",
               "modules/MarketWatch/auto-trading",
               "modules/MarketWatch/troubleshooting"
