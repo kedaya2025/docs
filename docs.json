@@ -18,7 +18,24 @@
             "pages": [
               "index",
               "quick-start",
-              "modules"
+              "modules",
+              "Troubleshooting"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "历史统计",
+        "groups": [
+          {
+            "group": "统计功能",
+            "pages": [
+              "modules/HistoryStatistics/index",
+              "modules/HistoryStatistics/interface",
+              "modules/HistoryStatistics/data-analysis",
+              "modules/HistoryStatistics/statistics-dimensions",
+              "modules/HistoryStatistics/visualization",
+              "modules/HistoryStatistics/troubleshooting"
             ]
           }
         ]
@@ -34,6 +51,38 @@
               "modules/Analyse/reports",
               "modules/Analyse/ytd-analysis",
               "modules/Analyse/troubleshooting"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "新闻面板",
+        "groups": [
+          {
+            "group": "新闻功能",
+            "pages": [
+              "modules/NewsPanel/index",
+              "modules/NewsPanel/interface",
+              "modules/NewsPanel/news-sources",
+              "modules/NewsPanel/news-filtering",
+              "modules/NewsPanel/news-trading",
+              "modules/NewsPanel/troubleshooting"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "风险控制",
+        "groups": [
+          {
+            "group": "风控功能",
+            "pages": [
+              "modules/RiskControl/index",
+              "modules/RiskControl/interface",
+              "modules/RiskControl/account-risk",
+              "modules/RiskControl/custom-risk",
+              "modules/RiskControl/scheduled-close",
+              "modules/RiskControl/troubleshooting"
             ]
           }
         ]
@@ -70,22 +119,6 @@
         ]
       },
       {
-        "tab": "新闻面板",
-        "groups": [
-          {
-            "group": "新闻功能",
-            "pages": [
-              "modules/NewsPanel/index",
-              "modules/NewsPanel/interface",
-              "modules/NewsPanel/news-sources",
-              "modules/NewsPanel/news-filtering",
-              "modules/NewsPanel/news-trading",
-              "modules/NewsPanel/troubleshooting"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "篮子交易",
         "groups": [
           {
@@ -97,38 +130,6 @@
               "modules/BasketTrade/trend-analysis",
               "modules/BasketTrade/basket-trading",
               "modules/BasketTrade/troubleshooting"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "风险控制",
-        "groups": [
-          {
-            "group": "风控功能",
-            "pages": [
-              "modules/RiskControl/index",
-              "modules/RiskControl/interface",
-              "modules/RiskControl/account-risk",
-              "modules/RiskControl/custom-risk",
-              "modules/RiskControl/scheduled-close",
-              "modules/RiskControl/troubleshooting"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "历史统计",
-        "groups": [
-          {
-            "group": "统计功能",
-            "pages": [
-              "modules/HistoryStatistics/index",
-              "modules/HistoryStatistics/interface",
-              "modules/HistoryStatistics/data-analysis",
-              "modules/HistoryStatistics/statistics-dimensions",
-              "modules/HistoryStatistics/visualization",
-              "modules/HistoryStatistics/troubleshooting"
             ]
           }
         ]
