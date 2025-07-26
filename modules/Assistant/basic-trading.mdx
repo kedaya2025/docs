@@ -26,13 +26,6 @@ description: "市价单、挂单、止盈止损等基础交易操作详解"
   </Step>
 </Steps>
 
-#### 买入价格计算
-```
-买入价格 = 当前ASK价格
-止损价格 = ASK - max(最小距离, 设置止损) × 点值
-止盈价格 = ASK + max(最小距离, 设置止盈) × 点值
-```
-
 ### 卖出操作
 
 <Steps>
@@ -50,12 +43,6 @@ description: "市价单、挂单、止盈止损等基础交易操作详解"
   </Step>
 </Steps>
 
-#### 卖出价格计算
-```
-卖出价格 = 当前BID价格
-止损价格 = BID + max(最小距离, 设置止损) × 点值
-止盈价格 = BID - max(最小距离, 设置止盈) × 点值
-```
 
 ## 挂单交易
 
@@ -95,22 +82,6 @@ description: "市价单、挂单、止盈止损等基础交易操作详解"
   </Card>
 </CardGroup>
 
-### 挂单操作流程
-
-<Steps>
-  <Step title="设置距离">
-    在"与市场价的距离"中输入挂单距离（点数）
-  </Step>
-  <Step title="配置参数">
-    设置手数、止盈、止损等参数
-  </Step>
-  <Step title="选择挂单类型">
-    点击对应的挂单按钮（Buy/Sell Limit/Stop）
-  </Step>
-  <Step title="确认执行">
-    系统自动计算价格并提交挂单
-  </Step>
-</Steps>
 
 ### 挂单价格计算公式
 
@@ -203,31 +174,7 @@ $$
 - 止损价格: 1.1998 + 30点 = 1.2028
 - 止盈价格: 1.1998 - 50点 = 1.1948
 
-## 市场状态检查
 
-### 检查机制
-
-系统在执行交易前会进行以下检查：
-
-<Accordion title="交易模式检查">
-验证货币对的交易模式：
-- SYMBOL_TRADE_MODE_DISABLED: 禁止交易
-- SYMBOL_TRADE_MODE_LONGONLY: 只允许买入
-- SYMBOL_TRADE_MODE_SHORTONLY: 只允许卖出
-- SYMBOL_TRADE_MODE_CLOSEONLY: 只允许平仓
-- SYMBOL_TRADE_MODE_FULL: 完全交易
-</Accordion>
-
-<Accordion title="价格时效性检查">
-检查最新tick数据的时间：
-```
-if (当前时间 - 最新tick时间 > 300秒) {
-    市场状态 = 关闭
-} else {
-    市场状态 = 开放
-}
-```
-</Accordion>
 
 ### 状态反馈
 

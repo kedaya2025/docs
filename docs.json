@@ -92,7 +92,6 @@
             "group": "交易功能",
             "pages": [
               "modules/Assistant/index",
-              "modules/Assistant/interface",
               "modules/Assistant/basic-trading",
               "modules/Assistant/grid-trading",
               "modules/Assistant/position-management",
