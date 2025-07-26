@@ -77,7 +77,6 @@
             "group": "风控功能",
             "pages": [
               "modules/RiskControl/index",
-              "modules/RiskControl/interface",
               "modules/RiskControl/account-risk",
               "modules/RiskControl/custom-risk",
               "modules/RiskControl/scheduled-close",

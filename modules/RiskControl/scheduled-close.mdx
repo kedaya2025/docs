@@ -13,17 +13,6 @@ description: "每日定时自动平仓的配置和应用场景详解"
 
 系统通过定时器持续监控当前时间，当达到预设的平仓时间时自动执行全部平仓操作。
 
-#### 代码实现逻辑
-```cpp
-if(m_use_time) {  // 定时平仓功能已启用
-    string date_str = TimeToString(TimeLocal(), TIME_DATE) + " " + m_close_time;
-    datetime time = StringToTime(date_str);
-    if(TimeLocal() >= time && TimeLocal() <= time + 2) {
-        m_td.ClosePosition();  // 关闭所有持仓
-        m_td.ClosePending();   // 删除所有挂单
-    }
-}
-```
 
 ### 执行条件
 

@@ -72,28 +72,6 @@ $$
 
 这样可以直观地了解风险设置相对于账户规模的比例。
 
-### 实时监控机制
-
-风险控制系统通过定时器实时监控：
-
-```cpp
-void OnTimer() {
-    // 检查账户级风险条件
-    if (满足风险条件) {
-        执行全部平仓();
-    }
-    
-    // 检查自定义风险条件
-    if (满足分组风险条件) {
-        执行分组平仓();
-    }
-    
-    // 检查定时平仓条件
-    if (到达设定时间) {
-        执行定时平仓();
-    }
-}
-```
 
 ### 多重平仓保护
 
@@ -218,23 +196,3 @@ void OnTimer() {
 - 定时平仓时间应避开重要新闻发布时段
 - 定期备份风险控制设置
 </Info>
-
-## 模块文档
-
-<CardGroup cols={2}>
-  <Card title="账户风险管理" href="/modules/risk/account-risk">
-    账户级风险控制的详细配置和使用方法
-  </Card>
-  <Card title="自定义风险管理" href="/modules/risk/custom-risk">
-    魔术号和货币对的精细化风险控制
-  </Card>
-  <Card title="定时平仓功能" href="/modules/risk/scheduled-close">
-    定时平仓的配置和应用场景
-  </Card>
-  <Card title="界面操作指南" href="/modules/risk/interface">
-    风险控制界面的详细操作说明
-  </Card>
-  <Card title="问题解决" href="/modules/risk/troubleshooting">
-    常见问题和解决方案
-  </Card>
-</CardGroup>

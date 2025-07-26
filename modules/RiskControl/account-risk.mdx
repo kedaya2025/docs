@@ -19,16 +19,6 @@ $$
 \text{当前总浮盈} > \text{设定浮盈阈值} \rightarrow \text{执行全部平仓}
 $$
 
-#### 代码实现
-```cpp
-if(m_state[0]) {  // 总浮盈控制已启用
-    double profit = AccountInfoDouble(ACCOUNT_PROFIT);
-    if(profit > m_acc_profit) {
-        m_td.ClosePosition();  // 关闭所有持仓
-        m_td.ClosePending();   // 删除所有挂单
-    }
-}
-```
 
 #### 应用场景
 
@@ -60,16 +50,6 @@ $$
 \text{当前总浮盈} < -|\text{设定浮亏阈值}| \rightarrow \text{执行全部平仓}
 $$
 
-#### 代码实现
-```cpp
-if(m_state[1]) {  // 总浮亏控制已启用
-    double profit = AccountInfoDouble(ACCOUNT_PROFIT);
-    if(profit < -MathAbs(m_acc_loss)) {
-        m_td.ClosePosition();  // 关闭所有持仓
-        m_td.ClosePending();   // 删除所有挂单
-    }
-}
-```
 
 #### 风险控制策略
 
@@ -103,16 +83,6 @@ $$
 \text{账户净值} = \text{账户余额} + \text{总浮盈} > \text{设定净值阈值} \rightarrow \text{执行全部平仓}
 $$
 
-#### 代码实现
-```cpp
-if(m_state[2]) {  // 净值控制已启用
-    double equity = AccountInfoDouble(ACCOUNT_EQUITY);
-    if(equity > m_acc_equity) {
-        m_td.ClosePosition();  // 关闭所有持仓
-        m_td.ClosePending();   // 删除所有挂单
-    }
-}
-```
 
 #### 应用优势
 
@@ -143,17 +113,6 @@ if(m_state[2]) {  // 净值控制已启用
 $$
 \text{账户余额} > \text{设定余额阈值} \rightarrow \text{执行全部平仓}
 $$
-
-#### 代码实现
-```cpp
-if(m_state[3]) {  // 余额控制已启用
-    double balance = AccountInfoDouble(ACCOUNT_BALANCE);
-    if(balance > m_acc_balance) {
-        m_td.ClosePosition();  // 关闭所有持仓
-        m_td.ClosePending();   // 删除所有挂单
-    }
-}
-```
 
 #### 使用场景
 
