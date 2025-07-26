@@ -63,7 +63,6 @@
             "pages": [
               "modules/NewsPanel/index",
               "modules/NewsPanel/interface",
-              "modules/NewsPanel/news-sources",
               "modules/NewsPanel/news-filtering",
               "modules/NewsPanel/news-trading",
               "modules/NewsPanel/troubleshooting"

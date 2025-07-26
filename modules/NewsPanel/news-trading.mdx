@@ -7,6 +7,8 @@ description: "基于新闻事件的自动交易配置和管理详解"
 
 新闻交易系统是新闻面板的核心功能，允许用户基于重要新闻事件设置自动交易。系统支持在新闻发布前后的精确时间执行开仓或平仓操作，实现无人值守的新闻交易策略。
 
+![Pix Pin 2025 07 26 18 38 06 Pn](/images/PixPin_2025-07-26_18-38-06.png)
+
 ## 交易事务类型
 
 ### 开仓事务 (TRADE_OPEN)
@@ -14,21 +16,20 @@ description: "基于新闻事件的自动交易配置和管理详解"
 <CardGroup cols={2}>
   <Card title="市价单开仓" icon="zap">
     **订单类型**: ORDER_TYPE_BUY / ORDER_TYPE_SELL
-    
+
     **执行方式**: 按市价立即开仓
-    
+
     **适用场景**: 新闻发布后快速入场
-    
+
     **风险控制**: 支持止盈止损设置
   </Card>
-  
   <Card title="挂单开仓" icon="clock">
     **订单类型**: Buy/Sell Limit/Stop
-    
+
     **执行方式**: 在指定价格挂单等待成交
-    
+
     **适用场景**: 新闻发布前预设入场点
-    
+
     **价格计算**: 根据距离参数自动计算
   </Card>
 </CardGroup>
@@ -36,31 +37,32 @@ description: "基于新闻事件的自动交易配置和管理详解"
 #### 开仓参数配置
 
 <Accordion title="基础参数">
-**货币对**: 要交易的货币对符号
+  **货币对**: 要交易的货币对符号
 
-**手数**: 交易量，支持小数（如0.01, 0.1, 1.0）
+  **手数**: 交易量，支持小数（如0.01, 0.1, 1.0）
 
-**订单类型**: 
-- Buy: 买入市价单
-- Sell: 卖出市价单  
-- Buy Limit: 买入限价单
-- Sell Limit: 卖出限价单
-- Buy Stop: 买入停损单
-- Sell Stop: 卖出停损单
+  **订单类型**:
 
-**魔术号**: 订单标识，用于区分不同策略
+  - Buy: 买入市价单
+  - Sell: 卖出市价单
+  - Buy Limit: 买入限价单
+  - Sell Limit: 卖出限价单
+  - Buy Stop: 买入停损单
+  - Sell Stop: 卖出停损单
+
+  **魔术号**: 订单标识，用于区分不同策略
 </Accordion>
 
 <Accordion title="风险控制参数">
-**止盈(TP)**: 盈利目标点数，0表示不设置
+  **止盈(TP)**: 盈利目标点数，0表示不设置
 
-**止损(SL)**: 亏损限制点数，0表示不设置
+  **止损(SL)**: 亏损限制点数，0表示不设置
 
-**挂单距离**: 挂单价格距离当前市价的点数
+  **挂单距离**: 挂单价格距离当前市价的点数
 
-**点差限制**: 允许的最大点差，超过则不执行
+  **点差限制**: 允许的最大点差，超过则不执行
 
-**滑点控制**: 市价单允许的最大滑点
+  **滑点控制**: 市价单允许的最大滑点
 </Accordion>
 
 ### 平仓事务 (TRADE_CLOSE)
@@ -68,36 +70,24 @@ description: "基于新闻事件的自动交易配置和管理详解"
 <CardGroup cols={2}>
   <Card title="全部平仓" icon="square">
     **范围**: 关闭所有持仓和挂单
-    
+
     **货币对**: 设置为"NULL"
-    
+
     **用途**: 重大新闻前的风险控制
-    
+
     **执行**: 无条件立即平仓
   </Card>
-  
   <Card title="指定货币对平仓" icon="target">
     **范围**: 只关闭特定货币对的持仓
-    
+
     **货币对**: 指定具体的货币对
-    
+
     **用途**: 针对性的风险控制
-    
+
     **执行**: 只平仓相关货币对
   </Card>
 </CardGroup>
 
-#### 平仓代码实现
-
-```cpp
-if(temp.action == TRADE_CLOSE) {
-    string symbol = NULL;
-    if(temp.Request.symbol != "NULL")
-        symbol = temp.Request.symbol;
-    m_td.ClosePosition(symbol);  // 平仓
-    m_td.ClosePending(symbol);   // 删除挂单
-}
-```
 
 ## 执行时机控制
 
@@ -106,21 +96,20 @@ if(temp.action == TRADE_CLOSE) {
 <CardGroup cols={2}>
   <Card title="新闻发布前" icon="clock">
     **选择**: 勾选"新闻前"单选按钮
-    
+
     **时间计算**: 新闻时间 - 偏移分钟数
-    
+
     **适用**: 提前布局，抢占先机
-    
+
     **风险**: 方向判断错误的风险
   </Card>
-  
   <Card title="新闻发布后" icon="forward">
     **选择**: 勾选"新闻后"单选按钮
-    
-    **时间计算**: 新闻时间 + 偏移分钟数
-    
+
+    **时间计算**: 新闻时间 \+ 偏移分钟数
+
     **适用**: 跟随市场反应
-    
+
     **优势**: 根据实际影响调整
   </Card>
 </CardGroup>
@@ -128,6 +117,7 @@ if(temp.action == TRADE_CLOSE) {
 ### 时间偏移设置
 
 #### 偏移范围
+
 - **最小值**: 0分钟（新闻发布时执行）
 - **最大值**: 120分钟（2小时偏移）
 - **推荐值**: 5-30分钟（平衡时效性和准确性）
@@ -135,38 +125,21 @@ if(temp.action == TRADE_CLOSE) {
 #### 时间计算公式
 
 **新闻发布前执行**:
+
 $$
 \text{执行时间} = \text{新闻时间} - \text{偏移分钟数} \times 60
 $$
 
 **新闻发布后执行**:
+
 $$
 \text{执行时间} = \text{新闻时间} + \text{偏移分钟数} \times 60
 $$
 
-#### 代码实现
-
-```cpp
-if(m_pub[0]) m_real_date = m_selected_date - (m_pub_offset * 60);  // 新闻前
-if(m_pub[1]) m_real_date = m_selected_date + (m_pub_offset * 60);  // 新闻后
-```
-
 ### 执行窗口
 
-#### 执行条件
-
-系统在以下条件下执行交易事务：
-
-```cpp
-datetime time = TimeGMT() + m_Offset;
-if(!temp.Status && 
-   (time >= temp.Request.Time && time <= temp.Request.Time + 10)) {
-    // 执行交易事务
-    // 10秒缓冲时间，给事件执行留够间隙
-}
-```
-
 #### 执行特性
+
 - **执行窗口**: 10秒缓冲时间
 - **状态检查**: 避免重复执行
 - **时区调整**: 考虑时区偏移
@@ -181,7 +154,7 @@ if(!temp.Status &&
     在新闻列表中找到要交易的新闻事件
   </Step>
   <Step title="点击添加按钮">
-    点击新闻项右侧的"+"按钮
+    点击新闻项右侧的"\+"按钮
   </Step>
   <Step title="配置交易参数">
     在弹出的交易配置面板中设置参数
@@ -194,38 +167,6 @@ if(!temp.Status &&
   </Step>
 </Steps>
 
-### 事务数据结构
-
-#### TradeRequest结构
-
-```cpp
-struct TradeRequest {
-    datetime Time;           // 交易事务执行时间戳
-    int magic;              // 魔术号
-    string symbol;          // 货币对
-    double volume;          // 手数
-    ENUM_ORDER_TYPE type;   // 订单类型
-    int price_pips;         // 挂单距离（点数）
-    int sl;                 // 止损（点数）
-    int tp;                 // 止盈（点数）
-    int slippage;           // 滑点
-    int spread;             // 点差限制
-    string comment;         // 订单备注
-};
-```
-
-#### TradeTransaction结构
-
-```cpp
-struct TradeTransaction {
-    datetime Time;          // 新闻时间戳
-    ENUM_TRANSACTION action; // 事务类型（开仓/平仓）
-    TradeRequest Request;   // 订单结构
-    bool Status;            // 事务状态（未执行/已执行）
-    string Comment;         // 事务备注
-    MqlNews News;           // 事务所属的新闻
-};
-```
 
 ### 事务列表管理
 
@@ -248,20 +189,20 @@ struct TradeTransaction {
 
 #### 事务列表字段
 
-| 字段 | 说明 | 示例 |
-|------|------|------|
-| **#** | 序号 | 01, 02, 03 |
+| 字段       | 说明     | 示例               |
+| -------- | ------ | ---------------- |
+| **#**    | 序号     | 01, 02, 03       |
 | **执行时间** | 实际执行时间 | 2024-01-15 14:30 |
-| **事务** | 事务类型 | Open / Close |
-| **货币** | 交易货币对 | EURUSD |
-| **类型** | 订单类型 | buy / sell limit |
-| **交易量** | 手数 | 0.10 |
-| **止盈** | 止盈点数 | 50 |
-| **止损** | 止损点数 | 30 |
-| **间距** | 挂单距离 | 20 |
-| **魔号** | 魔术号 | 2025 |
-| **状态** | 执行状态 | Wait / Success |
-| **备注** | 订单备注 | News Trade |
+| **事务**   | 事务类型   | Open / Close     |
+| **货币**   | 交易货币对  | EURUSD           |
+| **类型**   | 订单类型   | buy / sell limit |
+| **交易量**  | 手数     | 0.10             |
+| **止盈**   | 止盈点数   | 50               |
+| **止损**   | 止损点数   | 30               |
+| **间距**   | 挂单距离   | 20               |
+| **魔号**   | 魔术号    | 2025             |
+| **状态**   | 执行状态   | Wait / Success   |
+| **备注**   | 订单备注   | News Trade       |
 
 ### 事务删除
 
@@ -282,62 +223,28 @@ struct TradeTransaction {
   </Step>
 </Steps>
 
-#### 自动清理
-
-系统会自动清理过期的事务：
-
-```cpp
-bool DeleteTradeTransaction() {
-    int total = ArraySize(m_trade);
-    for(int i = 0; i < total; i++) {
-        TradeTransaction temp = m_trade[i];
-        if(temp.Time < TimeCurrent())
-            ArrayRemove(m_trade, i, 1);
-    }
-    return false;
-}
-```
 
 ## 价格计算机制
-
-### 挂单价格计算
-
-#### Buy Limit / Sell Stop
-```cpp
-price = NormalizeDouble(bid - price_pips * point, digits);
-```
-
-#### Sell Limit / Buy Stop  
-```cpp
-price = NormalizeDouble(ask + price_pips * point, digits);
-```
 
 ### 止盈止损计算
 
 #### 买入订单
+
 - **止损价格**: 开仓价格 - 止损点数 × 点值
-- **止盈价格**: 开仓价格 + 止盈点数 × 点值
+- **止盈价格**: 开仓价格 \+ 止盈点数 × 点值
 
 #### 卖出订单
-- **止损价格**: 开仓价格 + 止损点数 × 点值  
+
+- **止损价格**: 开仓价格 \+ 止损点数 × 点值
 - **止盈价格**: 开仓价格 - 止盈点数 × 点值
 
 ## 风险控制机制
 
 ### 市场状态检查
 
-#### 交易前验证
-
-```cpp
-if(!m_td.CheckAlgo()) continue;  // 检查算法交易权限
-
-if(temp.Request.type < 2) {  // 市价单检查
-    if(!m_td.CheckSymbolStatus(temp.Request.symbol, temp.Request.spread))
-        continue;  // 检查货币对状态和点差
-}
-```
 
 #### 检查项目
+
 - **算法交易权限**: 确认EA有交易权限
 - **货币对状态**: 验证货币对可交易
 - **点差限制**: 检查当前点差是否超限
@@ -346,19 +253,21 @@ if(temp.Request.type < 2) {  // 市价单检查
 ### 执行安全机制
 
 <Warning>
-**重要安全提醒**
-- 新闻交易具有高风险性，价格可能剧烈波动
-- 重要新闻发布时点差可能显著扩大
-- 建议设置合理的止损保护资金安全
-- 首次使用建议在模拟账户中测试
+  **重要安全提醒**
+
+  - 新闻交易具有高风险性，价格可能剧烈波动
+  - 重要新闻发布时点差可能显著扩大
+  - 建议设置合理的止损保护资金安全
+  - 首次使用建议在模拟账户中测试
 </Warning>
 
 <Tip>
-**风险控制建议**
-- 控制单笔交易的手数大小
-- 设置合理的止盈止损比例
-- 避免在流动性差的时段交易
-- 关注新闻的实际重要性和市场预期
+  **风险控制建议**
+
+  - 控制单笔交易的手数大小
+  - 设置合理的止盈止损比例
+  - 避免在流动性差的时段交易
+  - 关注新闻的实际重要性和市场预期
 </Tip>
 
 ## 实战应用案例
@@ -366,12 +275,14 @@ if(temp.Request.type < 2) {  // 市价单检查
 ### 案例1：非农数据交易
 
 #### 新闻事件
+
 - **事件**: 美国非农就业数据
 - **时间**: 2024-01-05 21:30 GMT
 - **重要性**: 高
 - **预期影响**: USD相关货币对
 
 #### 交易策略
+
 ```
 事务类型: 开仓
 货币对: EURUSD
@@ -384,6 +295,7 @@ if(temp.Request.type < 2) {  // 市价单检查
 ```
 
 #### 策略逻辑
+
 1. 等待非农数据公布
 2. 根据数据好坏判断USD走势
 3. 在突破点位自动入场
@@ -392,12 +304,14 @@ if(temp.Request.type < 2) {  // 市价单检查
 ### 案例2：央行决议前风险控制
 
 #### 新闻事件
+
 - **事件**: 欧央行利率决议
 - **时间**: 2024-01-25 19:45 GMT
 - **重要性**: 高
 - **预期影响**: EUR相关货币对
 
 #### 风险控制策略
+
 ```
 事务类型: 平仓
 货币对: NULL (全部)
@@ -406,6 +320,7 @@ if(temp.Request.type < 2) {  // 市价单检查
 ```
 
 #### 策略逻辑
+
 1. 在央行决议前30分钟
 2. 自动平仓所有持仓
 3. 避免决议结果的冲击
@@ -416,30 +331,32 @@ if(temp.Request.type < 2) {  // 市价单检查
 <AccordionGroup>
   <Accordion title="为什么交易事务没有执行？">
     可能原因：
+
     - 市场已关闭或不可交易
     - 点差超过设定限制
     - 账户余额不足
     - EA没有交易权限
     - 时间设置错误
-    
+
     解决方法：
+
     - 检查市场交易时间
     - 调整点差限制设置
     - 确保账户有足够资金
     - 检查EA设置和权限
     - 验证时间和时区设置
   </Accordion>
-  
   <Accordion title="如何设置合理的执行时间？">
     建议设置：
+
     - 重要数据：新闻后5-15分钟
     - 央行决议：新闻后10-30分钟
     - 一般新闻：新闻前后5-10分钟
     - 风险控制：新闻前30-60分钟
   </Accordion>
-  
   <Accordion title="挂单价格计算不准确怎么办？">
     检查项目：
+
     - 确认挂单距离设置合理
     - 验证货币对的点值设置
     - 检查价格精度设置

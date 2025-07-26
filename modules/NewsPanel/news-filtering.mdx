@@ -47,23 +47,6 @@ description: "新闻筛选、时区管理和浏览功能的详细使用指南"
 
 ### 筛选控制
 
-#### 筛选状态管理
-
-系统使用状态数组管理重要性筛选：
-
-```cpp
-bool m_view_state[3];  // 查看状态数组
-// [0] = 高重要性
-// [1] = 中重要性  
-// [2] = 低重要性
-```
-
-#### 默认设置
-
-```cpp
-ArrayInitialize(m_view_state, true);  // 默认显示所有等级
-```
-
 #### 筛选操作
 
 <Steps>
@@ -145,12 +128,6 @@ ArrayInitialize(m_view_state, true);  // 默认显示所有等级
 
 **设置位置**: 设置面板的"货币对列表"输入框
 
-**代码实现**:
-```cpp
-if(sparam == m_setprefix + "symbol_list") {
-    m_symbol_list = ObjectGetString(0, sparam, OBJPROP_TEXT);
-}
-```
 </Accordion>
 
 #### 筛选逻辑
@@ -206,13 +183,6 @@ if(sparam == m_setprefix + "symbol_list") {
   </Step>
 </Steps>
 
-#### 时区数据结构
-
-```cpp
-NewsTimeZone m_time_zone;    // 时区数据
-int m_Offset;                // 时差
-int m_zone_index;            // 选定时区索引
-```
 
 ### 时间类型
 
@@ -248,15 +218,6 @@ int m_zone_index;            // 选定时区索引
 **显示**: 按本地时区显示时间
 </Accordion>
 
-#### 时间类型枚举
-
-```cpp
-enum ENUM_BRT_TYPE {
-    GMT_TIME,      // GMT时间
-    SERVER_TIME,   // 服务器时间  
-    LOCAL_TIME     // 本地时间
-};
-```
 
 ## 日期筛选
 
@@ -284,150 +245,6 @@ enum ENUM_BRT_TYPE {
   </Card>
 </CardGroup>
 
-### 日期筛选逻辑
-
-#### 筛选范围
-
-- **当日新闻**: 显示选定日期的所有新闻
-- **时间范围**: 从选定日期00:00到23:59
-- **时区影响**: 根据选定时区调整日期范围
-
-#### 代码实现
-
-```cpp
-datetime m_selected_dates;   // 日期选择器选定的日期
-bool m_dateopen;            // 日期选择器状态
-
-// 日期筛选逻辑
-void TodayNews() {
-    // 根据选定日期筛选新闻
-    // 考虑时区偏移
-    // 更新新闻列表显示
-}
-```
-
-## 分页浏览
-
-### 分页机制
-
-#### 分页参数
-
-<CardGroup cols={2}>
-  <Card title="基本参数" icon="list">
-    **每页行数**: m_show_rows
-    
-    **当前页**: m_curr_page
-    
-    **总页数**: m_pages
-    
-    **总新闻数**: ArraySize(m_news)
-  </Card>
-  
-  <Card title="计算公式" icon="calculator">
-    **总页数**: 
-    ```
-    m_pages = (总新闻数 + 每页行数 - 1) / 每页行数
-    ```
-    
-    **当前页范围**:
-    ```
-    起始索引 = (当前页 - 1) × 每页行数
-    结束索引 = 起始索引 + 每页行数 - 1
-    ```
-  </Card>
-</CardGroup>
-
-### 导航控制
-
-#### 导航按钮
-
-<Steps>
-  <Step title="上一页">
-    点击"PREV"按钮跳转到上一页
-    
-    条件：当前页 > 1
-  </Step>
-  <Step title="下一页">
-    点击"NEXT"按钮跳转到下一页
-    
-    条件：当前页 < 总页数
-  </Step>
-  <Step title="跳转页面">
-    在页码输入框中输入页码，点击"GO"
-    
-    范围：1 到 总页数
-  </Step>
-  <Step title="页面显示">
-    显示格式："当前页 / 总页数"
-    
-    示例："3 / 15"
-  </Step>
-</Steps>
-
-#### 导航代码实现
-
-```cpp
-// 上一页
-if(sparam == m_prefix + "PREV") {
-    if(m_curr_page > 1) {
-        m_curr_page--;
-        DrawNewsPanel();
-    }
-}
-
-// 下一页  
-if(sparam == m_prefix + "NEXT") {
-    if(m_curr_page < m_pages) {
-        m_curr_page++;
-        DrawNewsPanel();
-    }
-}
-
-// 跳转页面
-if(sparam == m_prefix + "PAGE_GO") {
-    string inp = ObjectGetString(0, m_prefix + "PAGE_INPUT", OBJPROP_TEXT);
-    int page = (int)StringToInteger(inp);
-    if(page > m_pages) page = m_pages;
-    if(page < 1) page = 1;
-    if(page != m_curr_page) {
-        m_curr_page = page;
-        DrawNewsPanel();
-    }
-}
-```
-
-## 筛选组合使用
-
-### 多条件筛选
-
-用户可以同时使用多个筛选条件：
-
-#### 筛选优先级
-
-1. **新闻源筛选**: 首先确定数据来源
-2. **日期筛选**: 限定时间范围
-3. **重要性筛选**: 过滤重要性等级
-4. **货币对筛选**: 匹配相关货币对
-
-#### 筛选流程
-
-<Steps>
-  <Step title="获取原始数据">
-    从选定新闻源获取指定日期的所有新闻
-  </Step>
-  <Step title="应用重要性筛选">
-    根据重要性等级选择过滤新闻
-  </Step>
-  <Step title="应用货币对筛选">
-    根据货币对列表匹配相关新闻
-  </Step>
-  <Step title="计算分页">
-    根据筛选结果计算分页参数
-  </Step>
-  <Step title="显示结果">
-    在当前页显示筛选后的新闻
-  </Step>
-</Steps>
 
 ### 筛选优化建议
 

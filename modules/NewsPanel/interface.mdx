@@ -7,75 +7,6 @@ description: "新闻面板界面布局和交互功能的详细操作说明"
 
 新闻面板采用多层级界面设计，包含主面板、设置面板、交易配置面板和事务列表面板四个主要界面。所有面板都支持拖拽移动，并提供丰富的交互功能。
 
-## 主面板结构
-
-### 面板尺寸和布局
-
-<CardGroup cols={2}>
-  <Card title="基本尺寸" icon="ruler">
-    **宽度**: m_W（动态计算）
-    
-    **高度**: m_H（动态计算）
-    
-    **标题栏**: m_header_h（30px）
-    
-    **步长**: m_step（5px间距）
-  </Card>
-  
-  <Card title="布局结构" icon="layout">
-    **标题栏**: 模块名称和控制按钮
-    
-    **新闻源区**: 新闻源选择按钮
-    
-    **筛选区**: 重要性和时间控制
-    
-    **新闻列表**: 分页显示新闻内容
-    
-    **导航区**: 分页控制和功能按钮
-  </Card>
-</CardGroup>
-
-### 标题栏区域
-
-#### 标题显示
-
-<Accordion title="多语言标题">
-**中文**: "TraderCopilot - 新闻面板"
-
-**英文**: "TraderCopilot - News Panel"
-
-**字体**: 根据语言自动选择合适字体
-
-**位置**: 左对齐，垂直居中
-</Accordion>
-
-#### 控制按钮
-
-<CardGroup cols={3}>
-  <Card title="关闭按钮" icon="x">
-    **位置**: 标题栏右侧
-    
-    **功能**: 关闭新闻面板
-    
-    **样式**: 20×20像素X图标
-  </Card>
-  
-  <Card title="设置按钮" icon="gear">
-    **位置**: 关闭按钮左侧
-    
-    **功能**: 打开设置面板
-    
-    **状态**: 支持开关状态显示
-  </Card>
-  
-  <Card title="交易按钮" icon="chart-line">
-    **位置**: 设置按钮左侧
-    
-    **功能**: 打开交易事务列表
-    
-    **状态**: 支持开关状态显示
-  </Card>
-</CardGroup>
 
 ## 新闻源选择区
 
@@ -123,35 +54,6 @@ description: "新闻面板界面布局和交互功能的详细操作说明"
   </Step>
 </Steps>
 
-## 筛选控制区
-
-### 重要性筛选
-
-<CardGroup cols={3}>
-  <Card title="高重要性" icon="exclamation-triangle">
-    **控件**: 复选框
-    
-    **标识**: m_prefix + "VIEW_HIGH"
-    
-    **默认**: 勾选状态
-  </Card>
-  
-  <Card title="中重要性" icon="exclamation">
-    **控件**: 复选框
-    
-    **标识**: m_prefix + "VIEW_MEDIUM"
-    
-    **默认**: 勾选状态
-  </Card>
-  
-  <Card title="低重要性" icon="info">
-    **控件**: 复选框
-    
-    **标识**: m_prefix + "VIEW_LOW"
-    
-    **默认**: 勾选状态
-  </Card>
-</CardGroup>
 
 ### 时间控制
 
@@ -278,61 +180,8 @@ description: "新闻面板界面布局和交互功能的详细操作说明"
   </Step>
 </Steps>
 
-#### 代码实现
-
-```cpp
-if(StringFind(sparam, m_prefix + "ITEM_") >= 0) {
-    int clicked_item = GetClickedItemIndex(sparam);
-    if(clicked_item >= 0) {
-        m_clicked_item = clicked_item;
-        if(m_allow_select) {
-            if(clicked_item == m_selected_item) {
-                m_selected_item = -1;  // 取消选择
-            } else {
-                m_selected_item = clicked_item;  // 选择新项
-            }
-        }
-    }
-}
-```
 
 ## 导航控制区
-
-### 分页导航
-
-<CardGroup cols={4}>
-  <Card title="上一页" icon="arrow-left">
-    **按钮**: "PREV"
-    
-    **功能**: 跳转到上一页
-    
-    **条件**: 当前页 > 1
-  </Card>
-  
-  <Card title="页码显示" icon="list-ol">
-    **格式**: "当前页 / 总页数"
-    
-    **示例**: "3 / 15"
-    
-    **功能**: 显示分页状态
-  </Card>
-  
-  <Card title="页码输入" icon="edit">
-    **控件**: 输入框
-    
-    **功能**: 直接输入页码跳转
-    
-    **验证**: 自动验证页码范围
-  </Card>
-  
-  <Card title="下一页" icon="arrow-right">
-    **按钮**: "NEXT"
-    
-    **功能**: 跳转到下一页
-    
-    **条件**: 当前页 < 总页数
-  </Card>
-</CardGroup>
 
 ### 功能按钮
 
@@ -533,45 +382,3 @@ if(StringFind(sparam, m_prefix + "ITEM_") >= 0) {
 - **边界限制**: 防止拖拽到屏幕外
 - **位置记忆**: 记住面板位置
 - **组合拖拽**: 主面板拖拽时其他面板跟随
-
-### 拖拽代码实现
-
-```cpp
-void SetDragObjects(CDrag* &dg, string main_obj, string &grops[], const string fix) {
-    dg.MemoryGroups();
-    dg.SetDragMode(main_obj, DRAG_MODE_FREE);
-    // 收集所有相关对象
-    // 创建拖拽组
-    if(ArraySize(grops) > 0) 
-        dg.CreateObjectGroup(GroupName, grops, main_obj);
-}
-```
-
-## 响应式设计
-
-### 字体自适应
-
-<CardGroup cols={2}>
-  <Card title="DPI适配" icon="monitor">
-    **功能**: 根据屏幕DPI自动调整字体大小
-    
-    **公式**: `(dpi > 96) ? (fontsize * dpi / 96) : fontsize`
-    
-    **效果**: 确保在不同分辨率下清晰显示
-  </Card>
-  
-  <Card title="多语言字体" icon="language">
-    **中文**: Microsoft YaHei字体
-    
-    **英文**: Arial字体
-    
-    **自动**: 根据内容语言自动选择
-  </Card>
-</CardGroup>
-
-### 布局自适应
-
-- **动态计算**: 根据内容动态计算面板大小
-- **最小尺寸**: 确保所有元素可见
-- **最大尺寸**: 防止面板过大影响图表
-- **比例调整**: 保持界面元素的合理比例
