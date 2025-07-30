@@ -18,6 +18,7 @@
             "pages": [
               "index",
               "quick-start",
+              "login",
               "modules",
               "Troubleshooting"
             ]
